@@ -8,6 +8,7 @@ query TopAnimeByRating($page: Int, $perPage: Int) {
             status
             episodes
             bannerImage
+            averageScore
         }
     }
 }

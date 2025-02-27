@@ -8,6 +8,7 @@ query TopAnimeBySeason($page: Int, $perPage: Int, $season: MediaSeason, $seasonY
             status
             episodes
             bannerImage
+            averageScore
         }
     }
 }
