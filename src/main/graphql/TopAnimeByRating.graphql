@@ -1,0 +1,13 @@
+query TopAnimeByRating($page: Int, $perPage: Int) {
+    Page(page: $page, perPage: $perPage) {
+        media(sort: SCORE_DESC, type: ANIME) {
+            title {
+                english
+                native
+            }
+            status
+            episodes
+            bannerImage
+        }
+    }
+}
