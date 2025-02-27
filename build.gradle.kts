@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.plugin.compose")
+    id("com.apollographql.apollo") version "4.1.1"
 }
 
 group = "dev.dubsky"
@@ -21,7 +22,15 @@ dependencies {
     // (in a separate module for demo project and in testMain).
     // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs)
+    implementation("com.apollographql.apollo:apollo-runtime:4.1.1")
 }
+
+apollo {
+    service("service") {
+        packageName.set("dev.dubsky.aiko.graphql")
+    }
+}
+
 
 compose.desktop {
     application {
