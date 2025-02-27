@@ -7,13 +7,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowState
+import dev.dubsky.aiko.api.AnimeData
 import dev.dubsky.aiko.components.bar.ControlBar
 import dev.dubsky.aiko.components.bar.NavBar
 
 @Preview
 @Composable
 fun Composer() {
-    var screenActive by remember { mutableStateOf(Screens.List) }
+    var screenActive by remember { mutableStateOf(Screens.Home) }
     val windowState by remember { mutableStateOf(WindowState()) }
 
     Box(
@@ -35,11 +36,13 @@ fun Composer() {
             )
 
             when (screenActive) {
-                Screens.Home -> HomeScreen()
+                Screens.Home -> {
+                    HomeScreen()
+                }
                 Screens.Browse -> ComingScreen()
                 Screens.Player -> ComingScreen()
                 Screens.List -> ComingScreen()
-                Screens.Settings -> ComingScreen()
+                Screens.Settings -> SettingsScreen()
             }
         }
 
