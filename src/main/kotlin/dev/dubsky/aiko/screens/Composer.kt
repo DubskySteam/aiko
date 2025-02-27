@@ -3,8 +3,10 @@ package dev.dubsky.aiko.screens
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.*
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowState
 import dev.dubsky.aiko.components.bar.ControlBar
+import dev.dubsky.aiko.components.bar.NavBar
 
 @Preview
 @Composable
@@ -29,8 +31,14 @@ fun Composer() {
             Screens.Home -> HomeScreen()
             Screens.Browse -> ComingScreen()
             Screens.Player -> ComingScreen()
+            Screens.List -> ComingScreen()
             Screens.Settings -> ComingScreen()
         }
 
+        NavBar(
+            currentScreen = screenActive,
+            onScreenSelected = { screenActive = it },
+            menuSize = 56.dp
+        )
     }
 }
