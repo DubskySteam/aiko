@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -22,17 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import dev.dubsky.aiko.api.AnimeData
+import dev.dubsky.aiko.data.Anime
 import kotlinx.coroutines.launch
 
-data class Anime(
-    val id: Int,
-    val title: String,
-    val imageUrl: String,
-    val rating: Int
-)
-
+@ExperimentalMaterialApi
 @Composable
-fun AnimeCard(anime: Anime, cardWidth: Dp, cardHeight: Dp) {
+fun AnimeCard(anime: Anime, cardWidth: Dp, cardHeight: Dp, onClick: () -> Unit = {}) {
     Card(
         modifier = Modifier
             .width(cardWidth)
@@ -40,7 +36,8 @@ fun AnimeCard(anime: Anime, cardWidth: Dp, cardHeight: Dp) {
             .padding(8.dp),
         shape = RoundedCornerShape(8.dp),
         elevation = 4.dp,
-        backgroundColor = Color(0xFF1E2A38)
+        backgroundColor = Color(0xFF1E2A38),
+        onClick = onClick
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
@@ -83,9 +80,10 @@ fun AnimeCard(anime: Anime, cardWidth: Dp, cardHeight: Dp) {
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
-fun HomeScreen() {
+fun HomeScreen(onAnimeSelected: (Anime) -> Unit = {}) {
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
     var topAiringAnime by remember { mutableStateOf<List<Anime>>(emptyList()) }
@@ -100,7 +98,7 @@ fun HomeScreen() {
             val allSeasonalAnime = seasonalResponse.data?.Page?.media?.mapNotNull { media ->
                 media?.let {
                     Anime(
-                        id = 0,
+                        id = it.id,
                         title = it.title?.english ?: it.title?.native ?: "Unknown",
                         imageUrl = it.bannerImage ?: "",
                         rating = it.averageScore ?: 0
@@ -113,7 +111,7 @@ fun HomeScreen() {
             topAiringAnime = airingResponse.data?.Page?.media?.mapNotNull { media ->
                 media?.let {
                     Anime(
-                        id = 0,
+                        id = it.id,
                         title = it.title?.english ?: it.title?.native ?: "Unknown",
                         imageUrl = it.bannerImage ?: "",
                         rating = it.averageScore ?: 0
@@ -129,7 +127,7 @@ fun HomeScreen() {
             val cardPadding = 8.dp
             val cardsPerRow = 5
             val totalPadding = (cardsPerRow + 1) * cardPadding
-            val cardWidth = (maxWidth - totalPadding) / cardsPerRow
+            val cardWidth = (maxWidth - totalPadding) / (cardsPerRow * 2)  // Reduce width by 50%
             val cardHeight = cardWidth * 1.5f  // Maintain aspect ratio
 
             Column(
@@ -143,7 +141,9 @@ fun HomeScreen() {
                     horizontalArrangement = Arrangement.Center
                 ) {
                     topThreeSeasonalAnime.forEach { anime ->
-                        AnimeCard(anime = anime, cardWidth = cardWidth * 1.2f, cardHeight = cardHeight * 1.2f)
+                        AnimeCard(anime = anime, cardWidth = cardWidth * 1.2f, cardHeight = cardHeight * 1.2f, onClick = {
+                            onAnimeSelected(anime)
+                        })
                     }
                 }
 
@@ -164,7 +164,10 @@ fun HomeScreen() {
                         )
                         topAiringAnime.chunked(cardsPerRow).forEach { row ->
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                                row.forEach { AnimeCard(anime = it, cardWidth = cardWidth, cardHeight = cardHeight) }
+                                row.forEach { AnimeCard(anime = it, cardWidth = cardWidth, cardHeight = cardHeight,
+                                    onClick = {
+                                        onAnimeSelected(it)
+                                    }) }
                             }
                         }
                     }
@@ -179,7 +182,10 @@ fun HomeScreen() {
                         )
                         topSeasonalAnime.chunked(cardsPerRow).forEach { row ->
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                                row.forEach { AnimeCard(anime = it, cardWidth = cardWidth, cardHeight = cardHeight) }
+                                row.forEach { AnimeCard(anime = it, cardWidth = cardWidth, cardHeight = cardHeight
+                                    , onClick = {
+                                        onAnimeSelected(it)
+                                    }) }
                             }
                         }
                     }
