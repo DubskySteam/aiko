@@ -14,16 +14,17 @@ fun main() = application {
     var screenSize = Toolkit.getDefaultToolkit().screenSize
     var screenWidth = if (screenSize.width >= 2560) 1920.dp else 1280.dp
     var screenHeight = if (screenSize.height >= 1440) 1080.dp else 720.dp
+    var windowState = WindowState(
+        placement = WindowPlacement.Floating,
+        size = DpSize(screenWidth, screenHeight),
+    )
 
     Window(
         onCloseRequest = ::exitApplication,
         title = "Aiko",
         undecorated = true,
         resizable = true,
-        state = WindowState(
-            placement = WindowPlacement.Floating,
-            size = DpSize(screenWidth, screenHeight),
-        ),
+        state = windowState,
         onKeyEvent = {
             if (it.key == Key.X && it.isCtrlPressed) {
                 exitApplication()
@@ -35,7 +36,7 @@ fun main() = application {
         }
     ) {
         WindowDraggableArea {
-            Composer()
+            Composer(windowState)
         }
     }
 }
