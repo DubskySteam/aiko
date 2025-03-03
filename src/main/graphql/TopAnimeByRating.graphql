@@ -5,6 +5,7 @@ query TopAnimeByRating($page: Int, $perPage: Int) {
                 english
                 native
             }
+            id
             status
             episodes
             bannerImage

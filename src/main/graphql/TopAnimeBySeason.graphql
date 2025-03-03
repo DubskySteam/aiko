@@ -5,6 +5,7 @@ query TopAnimeBySeason($page: Int, $perPage: Int, $season: MediaSeason, $seasonY
                 english
                 native
             }
+            id
             status
             episodes
             bannerImage
