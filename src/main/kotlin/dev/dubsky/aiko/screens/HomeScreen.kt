@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -22,8 +23,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
+import coil3.compose.AsyncImage
+import dev.dubsky.aiko.api.AnimeCache
+import dev.dubsky.aiko.api.AnimeCache.topAiringAnime
+import dev.dubsky.aiko.api.AnimeCache.topSeasonalAnime
+import dev.dubsky.aiko.api.AnimeCache.topThreeSeasonalAnime
 import dev.dubsky.aiko.api.AnimeData
 import dev.dubsky.aiko.data.Anime
+import dev.dubsky.aiko.graphql.type.MediaSeason
 import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
@@ -54,6 +61,12 @@ fun AnimeCard(anime: Anime, cardWidth: Dp, cardHeight: Dp, onClick: () -> Unit =
                         .fillMaxSize()
                         .padding(4.dp)
                 ) {
+                    AsyncImage(
+                        model = anime.imageUrl,
+                        contentDescription = "Anime Image",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
                     Text(
                         text = anime.title.take(1),
                         color = Color.White,
@@ -86,38 +99,52 @@ fun AnimeCard(anime: Anime, cardWidth: Dp, cardHeight: Dp, onClick: () -> Unit =
 fun HomeScreen(onAnimeSelected: (Anime) -> Unit = {}) {
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
-    var topAiringAnime by remember { mutableStateOf<List<Anime>>(emptyList()) }
-    var topSeasonalAnime by remember { mutableStateOf<List<Anime>>(emptyList()) }
-    var topThreeSeasonalAnime by remember { mutableStateOf<List<Anime>>(emptyList()) }
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
-            val airingResponse = AnimeData().getTopAiringAnime()
-            val seasonalResponse = AnimeData().getTopAiringAnime()
+            if (AnimeCache.needsRefresh()) {
+                val airingResponse = AnimeData().getTopAiringAnime()
+                val seasonalResponse = AnimeData().getTopAiringAnime()
 
-            val allSeasonalAnime = seasonalResponse.data?.Page?.media?.mapNotNull { media ->
-                media?.let {
-                    Anime(
-                        id = it.id,
-                        title = it.title?.english ?: it.title?.native ?: "Unknown",
-                        imageUrl = it.bannerImage ?: "",
-                        rating = it.averageScore ?: 0
-                    )
-                }
-            } ?: emptyList()
+                val allSeasonalAnime = seasonalResponse.data?.Page?.media?.mapNotNull { media ->
+                    media?.let {
+                        Anime(
+                            id = it.id,
+                            title = it.title?.english ?: it.title?.native ?: "Unknown",
+                            imageUrl = it.bannerImage ?: "",
+                            rating = it.averageScore ?: 0,
+                            description = it.description ?: "",
+                            season = it.season ?: MediaSeason.UNKNOWN__,
+                            genres = it.genres?.mapNotNull { genre -> genre } ?: emptyList(),
+                            coverImage = it.coverImage?.large ?: "",
+                            seasonYear = it.seasonYear ?: 1500
+                        )
+                    }
+                } ?: emptyList()
 
-            topThreeSeasonalAnime = allSeasonalAnime.sortedByDescending { it.rating }.take(3)
-            topSeasonalAnime = allSeasonalAnime.drop(3).take(10)
-            topAiringAnime = airingResponse.data?.Page?.media?.mapNotNull { media ->
-                media?.let {
-                    Anime(
-                        id = it.id,
-                        title = it.title?.english ?: it.title?.native ?: "Unknown",
-                        imageUrl = it.bannerImage ?: "",
-                        rating = it.averageScore ?: 0
-                    )
-                }
-            }?.take(10) ?: emptyList()
+                val newTopThree = allSeasonalAnime.sortedByDescending { it.rating }.take(3)
+                val newTopSeasonal = allSeasonalAnime.drop(3).take(10)
+
+                val newTopAiring = airingResponse.data?.Page?.media?.mapNotNull { media ->
+                    media?.let {
+                        Anime(
+                            id = it.id,
+                            title = it.title?.english ?: it.title?.native ?: "Unknown",
+                            imageUrl = it.bannerImage ?: "",
+                            rating = it.averageScore ?: 0,
+                            description = it.description ?: "",
+                            season = it.season ?: MediaSeason.UNKNOWN__,
+                            genres = it.genres?.mapNotNull { genre -> genre } ?: emptyList(),
+                            coverImage = it.coverImage?.large ?: "",
+                            seasonYear = it.seasonYear ?: 1500
+                        )
+                    }
+                }?.take(10) ?: emptyList()
+
+                AnimeCache.updateTopThree(newTopThree)
+                AnimeCache.updateTopSeasonal(newTopSeasonal)
+                AnimeCache.updateTopAiring(newTopAiring)
+            }
         }
     }
 
