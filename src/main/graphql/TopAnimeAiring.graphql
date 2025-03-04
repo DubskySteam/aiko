@@ -1,0 +1,22 @@
+query TopAnimeAiring($page: Int, $perPage: Int) {
+    Page(page: $page, perPage: $perPage) {
+        media(sort: SCORE_DESC, type: ANIME, status: RELEASING) {
+            title {
+                english
+                native
+            }
+            id
+            status
+            episodes
+            bannerImage
+            averageScore
+            seasonYear
+            season
+            description
+            genres
+            coverImage {
+                large
+            }
+        }
+    }
+}
