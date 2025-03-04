@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "dev.dubsky"
-version = "1.0.0"
+version = "0.3.0"
 
 repositories {
     mavenCentral()
@@ -41,7 +41,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "aiko"
-            packageVersion = "1.0.0"
+            packageVersion = "1.3.0"
         }
     }
 }
