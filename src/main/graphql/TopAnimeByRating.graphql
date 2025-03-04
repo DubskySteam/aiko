@@ -10,6 +10,13 @@ query TopAnimeByRating($page: Int, $perPage: Int) {
             episodes
             bannerImage
             averageScore
+            seasonYear
+            season
+            description
+            genres
+            coverImage {
+                large
+            }
         }
     }
 }

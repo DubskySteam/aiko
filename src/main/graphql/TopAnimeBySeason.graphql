@@ -10,6 +10,13 @@ query TopAnimeBySeason($page: Int, $perPage: Int, $season: MediaSeason, $seasonY
             episodes
             bannerImage
             averageScore
+            seasonYear
+            season
+            description
+            genres
+            coverImage {
+                large
+            }
         }
     }
 }
