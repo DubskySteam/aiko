@@ -42,7 +42,9 @@ fun AnimeTags(tags: List<String>) {
             Text(
                 text = tag,
                 modifier = Modifier
-                    .padding(end = 8.dp)
+                    .padding(
+                        end = 8.dp,
+                    )
                     .border(1.dp, Color.Gray, MaterialTheme.shapes.small)
                     .padding(4.dp),
                 color = Color.Gray
@@ -136,7 +138,7 @@ fun AnimeScreen(anime: Anime) {
         AnimeBanner(imgUrl = anime.imageUrl)
         Row(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(32.dp)
                 .fillMaxWidth()
         ) {
             AnimeLogo(imgUrl = anime.coverImage)
@@ -149,7 +151,9 @@ fun AnimeScreen(anime: Anime) {
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
-        AnimeTags(tags = anime.genres)
+        Box(modifier = Modifier.padding(start = 32.dp) ) {
+            AnimeTags(tags = anime.genres)
+        }
     }
 }
 
