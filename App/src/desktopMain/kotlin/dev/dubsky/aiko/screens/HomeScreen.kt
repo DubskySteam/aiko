@@ -11,23 +11,20 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import coil3.compose.AsyncImage
-import dev.dubsky.aiko.api.AnimeCache
-import dev.dubsky.aiko.api.AnimeCache.topAiringAnime
-import dev.dubsky.aiko.api.AnimeCache.topSeasonalAnime
-import dev.dubsky.aiko.api.AnimeCache.topThreeSeasonalAnime
+import dev.dubsky.aiko.api.MemCache
+import dev.dubsky.aiko.api.MemCache.topAiringAnime
+import dev.dubsky.aiko.api.MemCache.topSeasonalAnime
 import dev.dubsky.aiko.api.AnimeData
 import dev.dubsky.aiko.data.Anime
 import dev.dubsky.aiko.graphql.type.MediaSeason
@@ -93,7 +90,7 @@ fun HomeScreen(onAnimeSelected: (Anime) -> Unit = {}) {
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
-            if (AnimeCache.needsRefresh()) {
+            if (MemCache.needsRefresh()) {
                 val airingResponse = AnimeData().getTopAiringAnime()
                 val seasonalResponse = AnimeData().getTopAiringAnimeBySeason()
 
@@ -132,9 +129,8 @@ fun HomeScreen(onAnimeSelected: (Anime) -> Unit = {}) {
                     }
                 }?.take(10) ?: emptyList()
 
-                AnimeCache.updateTopThree(newTopThree)
-                AnimeCache.updateTopSeasonal(newTopSeasonal)
-                AnimeCache.updateTopAiring(newTopAiring)
+                MemCache.updateTopSeasonal(newTopSeasonal)
+                MemCache.updateTopAiring(newTopAiring)
             }
         }
     }
@@ -158,11 +154,6 @@ fun HomeScreen(onAnimeSelected: (Anime) -> Unit = {}) {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    topThreeSeasonalAnime.forEach { anime ->
-                        AnimeCard(anime = anime, cardWidth = cardWidth * 1.2f, cardHeight = cardHeight * 1.2f, onClick = {
-                            onAnimeSelected(anime)
-                        })
-                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
