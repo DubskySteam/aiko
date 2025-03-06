@@ -25,6 +25,10 @@ kotlin {
             implementation("com.apollographql.apollo:apollo-runtime:4.1.1")
             implementation("io.coil-kt.coil3:coil-compose:3.1.0")
             implementation("io.coil-kt.coil3:coil-network-okhttp:3.1.0")
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+            implementation("com.typesafe:config:1.4.1")
+            implementation("com.moandjiezana.toml:toml4j:0.7.2")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
