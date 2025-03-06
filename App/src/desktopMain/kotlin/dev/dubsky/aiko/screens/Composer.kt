@@ -16,7 +16,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 @Composable
 fun Composer(windowState: WindowState) {
-    var screenActive by remember { mutableStateOf(Screens.Home) }
+    var screenActive by remember { mutableStateOf(Screens.Browse) }
     var selectedAnime by remember { mutableStateOf<Anime?>(null) }
     val windowState by remember { mutableStateOf(windowState) }
 
@@ -53,7 +53,12 @@ fun Composer(windowState: WindowState) {
                 Screens.Anime -> {
                     selectedAnime?.let { AnimeScreen(anime = it) }
                 }
-                Screens.Browse -> ComingScreen()
+                Screens.Browse -> BrowseScreen(
+                    onAnimeSelected = {
+                        selectedAnime = it
+                        screenActive = Screens.Anime
+                    }
+                )
                 Screens.Player -> ComingScreen()
                 Screens.List -> ComingScreen()
                 Screens.Settings -> SettingsScreen(windowState)
