@@ -52,7 +52,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "dev.dubsky.aiko"
-            packageVersion = "1.0.0"
+            packageVersion = "1.4.0"
         }
     }
 }

@@ -37,7 +37,7 @@ fun ControlBar(
                 .background(Color(0xFF0F141A))
         ) {
             Text(
-                text = "v0.1.0",
+                text = "v0.4.0",
                 color = Color.White.copy(alpha = 0.6f),
                 fontSize = 12.sp,
                 modifier = Modifier
