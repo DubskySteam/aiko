@@ -32,6 +32,11 @@ object ConfigManager {
         }
     }
 
+    fun setLogging(logging: Boolean) {
+        config.Logging = logging
+        saveConfig()
+    }
+
     fun setMode(mode: String) {
         config.Mode = mode
         saveConfig()

@@ -30,6 +30,8 @@ import dev.dubsky.aiko.api.AnimeData
 import dev.dubsky.aiko.data.Anime
 import dev.dubsky.aiko.graphql.type.MediaSeason
 import dev.dubsky.aiko.graphql.type.MediaStatus
+import dev.dubsky.aiko.logging.LogLevel
+import dev.dubsky.aiko.logging.Logger
 import kotlinx.coroutines.launch
 
 enum class AnimeGenre(val displayName: String) {
@@ -321,6 +323,7 @@ fun BrowseScreen(onAnimeSelected: (Anime) -> Unit = {}) {
                         )
                     }
                 } ?: emptyList()
+                Logger.log(LogLevel.INFO, "Browse", "Applied filters: $filters")
             } finally {
                 isLoading = false
             }
@@ -538,13 +541,15 @@ fun BrowseScreen(onAnimeSelected: (Anime) -> Unit = {}) {
                 }
             } else {
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
+                    columns = GridCells.Fixed(8),
                     contentPadding = PaddingValues(bottom = 16.dp)
                 ) {
                     items(animeResults) { anime ->
-                        BrowseScreenAnimeCard(
+                        AnimeCard(
                             anime = anime,
-                            onClick = { onAnimeSelected(anime) }
+                            onClick = { onAnimeSelected(anime) },
+                            cardWidth = 50.dp,
+                            cardHeight = 300.dp
                         )
                     }
                 }

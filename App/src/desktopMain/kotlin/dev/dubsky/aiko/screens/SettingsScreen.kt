@@ -13,15 +13,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowState
 import dev.dubsky.aiko.api.auth.anilist.do_auth
 import dev.dubsky.aiko.config.ConfigManager
+import dev.dubsky.aiko.logging.LogLevel
+import dev.dubsky.aiko.logging.Logger
 
 @Composable
-fun SettingsScreen(windowState: WindowState) {
+fun SettingsScreen(windowState: WindowState, navigateToLogs: () -> Unit) {
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Button(
             onClick = {
+                Logger.log(LogLevel.INFO, "SettingsScreen", "Attempting to set resolution > WQHD")
                 ConfigManager.setMode("WQHD")
                 ConfigManager.saveConfig()
                 windowState.size = DpSize(1920.dp, 1080.dp)
+                Logger.log(LogLevel.INFO, "SettingsScreen", "Attempting to set resolution > WQHD")
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -29,9 +33,11 @@ fun SettingsScreen(windowState: WindowState) {
         }
         Button(
             onClick = {
+                Logger.log(LogLevel.INFO, "SettingsScreen", "Attempting to set resolution > FHD")
                 ConfigManager.setMode("FHD")
                 ConfigManager.saveConfig()
                 windowState.size = DpSize(1280.dp, 720.dp)
+                Logger.log(LogLevel.INFO, "SettingsScreen", "Set resolution to FHD")
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -45,5 +51,14 @@ fun SettingsScreen(windowState: WindowState) {
         ) {
             Text("Login / Re-auth [Anilist]")
         }
+        Button(
+            onClick = {
+                navigateToLogs()
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("View logs")
+        }
+
     }
 }
