@@ -2,6 +2,7 @@ package dev.dubsky.aiko.config
 
 import com.moandjiezana.toml.Toml
 import com.moandjiezana.toml.TomlWriter
+import dev.dubsky.aiko.theme.AppTheme
 import java.io.File
 import java.nio.file.Paths
 
@@ -34,6 +35,11 @@ object ConfigManager {
 
     fun setLogging(logging: Boolean) {
         config.Logging = logging
+        saveConfig()
+    }
+
+    fun setTheme(theme: AppTheme) {
+        config.Theme = theme
         saveConfig()
     }
 
