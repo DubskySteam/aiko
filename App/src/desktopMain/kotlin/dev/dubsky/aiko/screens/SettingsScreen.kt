@@ -1,14 +1,18 @@
 package dev.dubsky.aiko.screens
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowState
+import dev.dubsky.aiko.api.auth.anilist.do_auth
 import dev.dubsky.aiko.config.ConfigManager
-import java.awt.Toolkit
 
 @Composable
 fun SettingsScreen(windowState: WindowState) {
@@ -32,6 +36,14 @@ fun SettingsScreen(windowState: WindowState) {
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Using FHD (1920x1080)")
+        }
+        Button(
+            onClick = {
+                do_auth()
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Login / Re-auth [Anilist]")
         }
     }
 }
