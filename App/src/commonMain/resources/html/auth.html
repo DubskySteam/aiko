@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[AIKO] Auth Success</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .button {
+            background: white;
+            color: #2575fc;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .button:hover {
+            background: #f0f0f0;
+        }
+    </style>
+    <script>
+        const fragment = window.location.hash.substring(1);
+        if (fragment) {
+            fetch(`http://localhost:8080/capture?${fragment}`)
+                .then(() => {
+                    document.getElementById("status").innerText = "Authentication Successful!";
+                })
+                .catch(() => {
+                    document.getElementById("status").innerText = "Failed to send token to server.";
+                });
+        } else {
+            document.getElementById("status").innerText = "No token found in URL.";
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="icon">🎉</div>
+    <h1 id="status">Authenticating...</h1>
+    <p>You can safely close this page now.</p>
+    <button class="button" onclick="window.close()">Close Window</button>
+</div>
+</body>
+</html>
