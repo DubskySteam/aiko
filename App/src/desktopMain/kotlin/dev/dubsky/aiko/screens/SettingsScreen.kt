@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -12,12 +13,17 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowState
 import dev.dubsky.aiko.api.auth.anilist.do_auth
+import dev.dubsky.aiko.components.button.ConfirmDialogButton
+import dev.dubsky.aiko.components.button.CustomDialog
 import dev.dubsky.aiko.config.ConfigManager
 import dev.dubsky.aiko.logging.LogLevel
 import dev.dubsky.aiko.logging.Logger
 
 @Composable
-fun SettingsScreen(windowState: WindowState, navigateToLogs: () -> Unit) {
+fun SettingsScreen(
+    windowState: WindowState,
+    navigateToLogs: () -> Unit,
+) {
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Button(
             onClick = {
@@ -43,14 +49,14 @@ fun SettingsScreen(windowState: WindowState, navigateToLogs: () -> Unit) {
         ) {
             Text("Using FHD (1920x1080)")
         }
-        Button(
-            onClick = {
-                do_auth()
-            },
+        ConfirmDialogButton(
+            buttonText = "Authenticate me hard!",
+            dialogTitle = "AniList Authentication",
+            dialogMessage = "This will open a browser window to authenticate with AniList",
+            confirmText = "Authenticate",
+            onConfirm = { do_auth() },
             modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Login / Re-auth [Anilist]")
-        }
+        )
         Button(
             onClick = {
                 navigateToLogs()
