@@ -10,8 +10,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowState
 import dev.dubsky.aiko.components.bar.ControlBar
 import dev.dubsky.aiko.components.bar.NavBar
+import dev.dubsky.aiko.components.bar.UnifiedBar
 import dev.dubsky.aiko.data.Anime
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlin.system.exitProcess
 
 @Preview
 @Composable
@@ -23,22 +25,22 @@ fun Composer(windowState: WindowState) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            //color = 11151c
             .background(Color(0xFF11151C))
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            ControlBar(
-                windowState = windowState,
+            UnifiedBar(
+                currentScreen = screenActive,
                 onMinimizeClick = {
                     windowState.isMinimized = true
                 },
                 onMaximizeClick = {
                 },
                 onCloseClick = {
-                    System.exit(0)
-                }
+                    exitProcess(0)
+                },
+                onScreenSelected = { screenActive = it }
             )
 
             when (screenActive) {
@@ -69,14 +71,14 @@ fun Composer(windowState: WindowState) {
             }
         }
 
-        Box(
-            modifier = Modifier.align(Alignment.BottomCenter)
-        ) {
-            NavBar(
-                currentScreen = screenActive,
-                onScreenSelected = { screenActive = it },
-                menuSize = 56.dp
-            )
-        }
+        //Box(
+        //    modifier = Modifier.align(Alignment.BottomCenter)
+        //) {
+        //    NavBar(
+        //        currentScreen = screenActive,
+        //        onScreenSelected = { screenActive = it },
+        //        menuSize = 56.dp
+        //    )
+        //}
     }
 }
