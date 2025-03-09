@@ -34,6 +34,12 @@ object ConfigManager {
 
     fun setMode(mode: String) {
         config.Mode = mode
+        saveConfig()
+    }
+
+    fun setToken(token: String) {
+        config.token = token
+        saveConfig()
     }
 
     fun saveConfig() {
