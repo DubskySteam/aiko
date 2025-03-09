@@ -1,6 +1,6 @@
 package dev.dubsky.aiko.screens
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import java.io.File
@@ -26,6 +25,12 @@ fun LogViewerScreen() {
     val logFiles = remember { File(logDirectory).listFiles()?.toList()?.sortedByDescending { it.name } ?: emptyList() }
     var selectedLogFile by remember { mutableStateOf(logFiles.firstOrNull()) }
     var showLogSelector by remember { mutableStateOf(false) }
+
+    val logLines by remember(selectedLogFile) {
+        mutableStateOf(selectedLogFile?.readLines() ?: emptyList())
+    }
+
+    val scrollState = rememberLazyListState()
 
     val backgroundColor = Color(0xFF121212)
     val surfaceColor = Color(0xFF1E1E1E)
@@ -54,21 +59,38 @@ fun LogViewerScreen() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            selectedLogFile?.let { file ->
-                val logLines = remember { file.readLines() }
-                val scrollState = rememberLazyListState()
-
-                LazyColumn(
+            if (logLines.isNotEmpty()) {
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(surfaceColor, RoundedCornerShape(8.dp))
-                        .padding(8.dp),
-                    state = scrollState
+                        .padding(8.dp)
                 ) {
-                    items(logLines) { line ->
-                        LogLine(line)
+                    Row {
+                        LazyColumn(
+                            state = scrollState,
+                            modifier = Modifier
+                                .weight(1f)
+                        ) {
+                            items(logLines) { line ->
+                                LogLine(line)
+                            }
+                        }
+
+                        VerticalScrollbar(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .padding(start = 8.dp),
+                            adapter = rememberScrollbarAdapter(scrollState)
+                        )
                     }
                 }
+            } else {
+                Text(
+                    text = "No log file selected or file is empty.",
+                    color = textColor,
+                    modifier = Modifier.padding(8.dp)
+                )
             }
         }
 
@@ -92,25 +114,28 @@ fun LogSelectorDialog(
     onLogSelected: (File) -> Unit
 ) {
     var filterText by remember { mutableStateOf("") }
-    val filteredLogs = logFiles.filter { it.name.contains(filterText, ignoreCase = true) }.take(5)
+    val filteredLogs = logFiles.filter { it.name.contains(filterText, ignoreCase = true) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Select Log File") },
         text = {
-            Column {
-                // Date filter input
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+            ) {
                 OutlinedTextField(
                     value = filterText,
                     onValueChange = { filterText = it },
                     label = { Text("Filter by date (dd-MM-yyyy)") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions.Default,
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                LazyColumn(modifier = Modifier.heightIn(max = 200.dp)) {
+                LazyColumn(modifier = Modifier.heightIn(max = 300.dp)) {
                     items(filteredLogs) { file ->
                         Button(
                             onClick = { onLogSelected(file) },
@@ -143,7 +168,7 @@ fun LogLine(line: String) {
                 append("[$timestamp] ")
             }
             withStyle(SpanStyle(color = when (level) {
-                "INFO" -> Color.Green
+                "INFO" -> Color(0xff55fa55)
                 "WARN" -> Color.Yellow
                 "ERROR" -> Color.Red
                 else -> Color.White
