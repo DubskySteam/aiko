@@ -4,13 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,7 +55,8 @@ fun UnifiedBar(
 
             Row(
                 modifier = Modifier.weight(1f),
-                horizontalArrangement = Arrangement.spacedBy(24.dp)
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 NavItem("Home", Icons.Default.Home, currentScreen == Screens.Home) {
                     onScreenSelected(Screens.Home)
@@ -68,8 +67,8 @@ fun UnifiedBar(
                 NavItem("List", Icons.AutoMirrored.Filled.List, currentScreen == Screens.List) {
                     onScreenSelected(Screens.List)
                 }
-                NavItem("Player", Icons.Default.PlayArrow, currentScreen == Screens.Player) {
-                    onScreenSelected(Screens.Player)
+                NavItem("Profile", Icons.Default.VerifiedUser, currentScreen == Screens.PROFILE) {
+                    onScreenSelected(Screens.PROFILE)
                 }
                 NavItem("Settings", Icons.Default.Settings, currentScreen == Screens.Settings) {
                     onScreenSelected(Screens.Settings)

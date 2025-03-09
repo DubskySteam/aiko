@@ -7,10 +7,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
 import dev.dubsky.aiko.components.bar.UnifiedBar
+import dev.dubsky.aiko.config.ConfigManager
 import dev.dubsky.aiko.data.Anime
-import dev.dubsky.aiko.theme.AppTheme
 import dev.dubsky.aiko.theme.AppThemedContent
 import dev.dubsky.aiko.theme.ThemeManager
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -23,7 +24,7 @@ fun Composer(windowState: WindowState) {
     var selectedAnime by remember { mutableStateOf<Anime?>(null) }
     val windowState by remember { mutableStateOf(windowState) }
 
-    var themeState = remember { mutableStateOf(AppTheme.ORANGE) }
+    var themeState = remember { mutableStateOf(ConfigManager.config.Theme) }
 
     ThemeManager.currentTheme = themeState
 
@@ -36,7 +37,14 @@ fun Composer(windowState: WindowState) {
             ) {
                 UnifiedBar(currentScreen = screenActive, onMinimizeClick = {
                     windowState.isMinimized = true
-                }, onMaximizeClick = {}, onCloseClick = {
+                }, onMaximizeClick = {
+                    if (windowState.placement == WindowPlacement.Maximized) {
+                        windowState.placement = WindowPlacement.Floating
+                    }
+                    else {
+                        windowState.placement = WindowPlacement.Maximized
+                    }
+                }, onCloseClick = {
                     exitProcess(0)
                 }, onScreenSelected = { screenActive = it })
 
@@ -59,10 +67,16 @@ fun Composer(windowState: WindowState) {
                             screenActive = Screens.Anime
                         })
 
-                    Screens.Player -> ComingScreen()
+                    Screens.PROFILE -> ComingScreen()
                     Screens.List -> ComingScreen()
                     Screens.Settings -> SettingsScreen(
-                        windowState = windowState, navigateToLogs = { screenActive = Screens.Logs })
+                        windowState = windowState,
+                        navigateToLogs = { screenActive = Screens.Logs },
+                        updateTheme = {
+                            themeState.value = it
+                        },
+                        currentTheme = themeState.value
+                        )
 
                     Screens.Logs -> LogViewerScreen()
                 }
