@@ -1,5 +1,5 @@
 package dev.dubsky.aiko.screens
 
 enum class Screens {
-    Home, Browse, List, Player, Settings, Anime, Logs
+    Home, Browse, List, Settings, Anime, Logs, PROFILE
 }

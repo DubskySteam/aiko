@@ -45,8 +45,13 @@ private val CustomColors = darkColors(
 
 private val DarkOrange = darkColors(
     primary = Color(0xFFFF9800),
+    primaryVariant = Color(0xFFE65100),
     secondary = Color(0xff1e1c1c),
-    background = Color(0xFF11151C)
+    background = Color(0xFF11151C),
+    surface = Color(0xFF1E1E1E),
+    onPrimary = Color.Black,
+    onBackground = Color.White,
+    onSurface = Color.White
 )
 
 @Composable
