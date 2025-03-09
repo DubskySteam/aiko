@@ -512,13 +512,12 @@ fun BrowseScreen(onAnimeSelected: (Anime) -> Unit = {}) {
 
                 Button(
                     onClick = { applyFilters() },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = AikoTheme.primary),
                     modifier = Modifier
                         .height(40.dp)
                         .weight(0.8f),
                     shape = RoundedCornerShape(20.dp)
                 ) {
-                    Text("Apply", color = Color.White, fontSize = 14.sp)
+                    Text("Apply", fontSize = 16.sp)
                 }
             }
 
