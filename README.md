@@ -47,4 +47,4 @@ _(Only as self-built for now, a until stable version is achieved and then publis
 ## Screenshots
 ![Screenshot](docs/github/homescreen.png)
 ![Screenshot](docs/github/browse.png)
-![Screenshot](docs/github/logs.png)
+![Screenshot](docs/github/settings.png)
