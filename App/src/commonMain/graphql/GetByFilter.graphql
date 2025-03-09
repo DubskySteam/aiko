@@ -1,0 +1,22 @@
+query GetByFilter($page: Int, $perPage: Int, $season: MediaSeason, $seasonYear: Int, $status: MediaStatus, $averageScore_greater: Int) {
+    Page(page: $page, perPage: $perPage) {
+        media(sort: SCORE_DESC, type: ANIME, season: $season, seasonYear: $seasonYear, status: $status, averageScore_greater: $averageScore_greater) {
+            title {
+                english
+                native
+            }
+            id
+            status
+            episodes
+            bannerImage
+            averageScore
+            description
+            seasonYear
+            season
+            genres
+            coverImage {
+                large
+            }
+        }
+    }
+}

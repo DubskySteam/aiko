@@ -1,73 +1,87 @@
 package dev.dubsky.aiko.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
-import dev.dubsky.aiko.components.bar.ControlBar
-import dev.dubsky.aiko.components.bar.NavBar
+import dev.dubsky.aiko.components.bar.UnifiedBar
+import dev.dubsky.aiko.config.ConfigManager
 import dev.dubsky.aiko.data.Anime
+import dev.dubsky.aiko.theme.AppThemedContent
+import dev.dubsky.aiko.theme.ThemeManager
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlin.system.exitProcess
 
 @Preview
 @Composable
 fun Composer(windowState: WindowState) {
-    var screenActive by remember { mutableStateOf(Screens.Home) }
+    var screenActive by remember { mutableStateOf(Screens.Settings) }
     var selectedAnime by remember { mutableStateOf<Anime?>(null) }
     val windowState by remember { mutableStateOf(windowState) }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            //color = 11151c
-            .background(Color(0xFF11151C))
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            ControlBar(
-                windowState = windowState,
-                onMinimizeClick = {
-                    windowState.isMinimized = true
-                },
-                onMaximizeClick = {
-                },
-                onCloseClick = {
-                    System.exit(0)
-                }
-            )
+    var themeState = remember { mutableStateOf(ConfigManager.config.Theme) }
 
-            when (screenActive) {
-                Screens.Home -> {
-                    HomeScreen(
+    ThemeManager.currentTheme = themeState
+
+    AppThemedContent {
+        Box(
+            modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.background)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                UnifiedBar(currentScreen = screenActive, onMinimizeClick = {
+                    windowState.isMinimized = true
+                }, onMaximizeClick = {
+                    if (windowState.placement == WindowPlacement.Maximized) {
+                        windowState.placement = WindowPlacement.Floating
+                    }
+                    else {
+                        windowState.placement = WindowPlacement.Maximized
+                    }
+                }, onCloseClick = {
+                    exitProcess(0)
+                }, onScreenSelected = { screenActive = it })
+
+                when (screenActive) {
+                    Screens.Home -> {
+                        HomeScreen(
+                            onAnimeSelected = {
+                                selectedAnime = it
+                                screenActive = Screens.Anime
+                            })
+                    }
+
+                    Screens.Anime -> {
+                        selectedAnime?.let { AnimeScreen(anime = it) }
+                    }
+
+                    Screens.Browse -> BrowseScreen(
                         onAnimeSelected = {
                             selectedAnime = it
                             screenActive = Screens.Anime
-                        }
-                    )
+                        })
+
+                    Screens.PROFILE -> ComingScreen()
+                    Screens.List -> ComingScreen()
+                    Screens.Settings -> SettingsScreen(
+                        windowState = windowState,
+                        navigateToLogs = { screenActive = Screens.Logs },
+                        updateTheme = {
+                            themeState.value = it
+                        },
+                        currentTheme = themeState.value
+                        )
+
+                    Screens.Logs -> LogViewerScreen()
                 }
-                Screens.Anime -> {
-                    selectedAnime?.let { AnimeScreen(anime = it) }
-                }
-                Screens.Browse -> ComingScreen()
-                Screens.Player -> ComingScreen()
-                Screens.List -> ComingScreen()
-                Screens.Settings -> SettingsScreen(windowState)
             }
         }
 
-        Box(
-            modifier = Modifier.align(Alignment.BottomCenter)
-        ) {
-            NavBar(
-                currentScreen = screenActive,
-                onScreenSelected = { screenActive = it },
-                menuSize = 56.dp
-            )
-        }
     }
 }

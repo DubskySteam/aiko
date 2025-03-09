@@ -13,16 +13,13 @@ A **Kotlin Multiplatform Compose** desktop app to browse anime, manage your pers
 
 ## Roadmap
 
-- [ ] Basic UI for browsing anime
-- [ ] Implement AniList API integration (search, trending etc.)
-- [ ] Add user authentication for AniList
+- [X] Basic UI for browsing anime
+- [X] Implement AniList API integration (search, trending etc.)
+- [X] Add user authentication for AniList
 - [ ] Implement watchlist management
 - [ ] Implement embedded video player
 - [ ] Implement "Watch Together"
 - [ ] Improve UI/UX for a seamless experience
-
-## Screenshots
-_(Coming soon)_
 
 ## Build from source
 
@@ -46,3 +43,8 @@ _(Coming soon)_
 **Linux**:
 
 _(Only as self-built for now, a until stable version is achieved and then published on the package managers)_
+
+## Screenshots
+![Screenshot](docs/github/homescreen.png)
+![Screenshot](docs/github/browse.png)
+![Screenshot](docs/github/settings.png)
