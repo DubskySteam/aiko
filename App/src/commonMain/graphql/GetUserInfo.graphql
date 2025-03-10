@@ -1,0 +1,23 @@
+query UserInfo {
+    Viewer {
+        id
+        name
+        avatar {
+            large
+        }
+        statistics {
+            anime {
+                count
+                meanScore
+                minutesWatched
+                episodesWatched
+            }
+            manga {
+                count
+                chaptersRead
+                meanScore
+            }
+        }
+        bannerImage
+    }
+}
