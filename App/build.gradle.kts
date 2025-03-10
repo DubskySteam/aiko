@@ -59,6 +59,8 @@ compose.desktop {
             windows {
                 includeAllModules = true
                 iconFile.set(project.file("src/commonMain/composeResources/drawable/logo.ico"))
+                menu = true
+                menuGroup = "Dubsky"
             }
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Aiko"
