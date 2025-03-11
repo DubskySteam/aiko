@@ -1,0 +1,20 @@
+query UserInfoExtended($userName: String) {
+    MediaListCollection(userName: $userName, sort: SCORE, type: ANIME) {
+        lists {
+            entries {
+                media {
+                    title {
+                        english
+                        native
+                    }
+                    type
+                    id
+                    episodes
+                }
+                score
+                progress
+            }
+            status
+        }
+    }
+}
