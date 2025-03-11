@@ -3,7 +3,6 @@ package dev.dubsky.aiko.api
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.ApolloResponse
 import com.apollographql.apollo.api.Optional
-import com.apollographql.apollo.api.http.HttpHeader
 import com.apollographql.apollo.api.http.HttpRequest
 import com.apollographql.apollo.api.http.HttpResponse
 import com.apollographql.apollo.network.http.HttpInterceptor
@@ -14,11 +13,8 @@ import dev.dubsky.aiko.graphql.type.MediaSeason
 import dev.dubsky.aiko.graphql.type.MediaStatus
 import dev.dubsky.aiko.logging.LogLevel
 import dev.dubsky.aiko.logging.Logger
-import kotlinx.coroutines.sync.Mutex
-import java.io.ObjectInputFilter.Config
-import java.net.http.HttpHeaders
 
-class AuthorizationInterceptor() : HttpInterceptor {
+class AuthorizationInterceptor : HttpInterceptor {
     override suspend fun intercept(request: HttpRequest, chain: HttpInterceptorChain): HttpResponse {
         Logger.log(LogLevel.INFO, "API", "Attempting to intercept HTTP Call")
         var token = ConfigManager.config.token.substringBefore('&')
@@ -32,7 +28,6 @@ class AuthorizationInterceptor() : HttpInterceptor {
 }
 
 class AnimeData {
-
 
 
     private fun buildAuthApolloClient(): ApolloClient {
@@ -113,5 +108,12 @@ class AnimeData {
         return response
     }
 
+    suspend fun GetUserAnimeList(): ApolloResponse<UserInfoExtendedQuery.Data> {
+        val apolloClient = buildApolloClient()
+        val response = apolloClient.query(UserInfoExtendedQuery(userName = Optional.present("Dubsky"))).execute()
+        Logger.log(LogLevel.INFO, "API", "User animes retrieved")
+        Logger.log(LogLevel.INFO, "API", "data: ${response.data?.MediaListCollection?.lists?.size}")
+        return response
+    }
 
 }
