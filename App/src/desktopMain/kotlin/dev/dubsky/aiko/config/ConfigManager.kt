@@ -53,6 +53,11 @@ object ConfigManager {
         saveConfig()
     }
 
+    fun setUser(name: String) {
+        config.userName = name
+        saveConfig()
+    }
+
     fun saveConfig() {
         if (!configFile.parentFile.exists()) {
             configFile.parentFile.mkdirs()
