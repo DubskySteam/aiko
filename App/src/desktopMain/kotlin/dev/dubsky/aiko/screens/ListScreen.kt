@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -17,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -303,12 +305,54 @@ fun AnimeTableRow(entry: AnimeListItem, isCurrentTab: Boolean) {
     }
 
     if (showEditDialog) {
+        var episode by remember { mutableStateOf(entry.episodes.toString()) }
+        var score by remember { mutableStateOf(entry.score.toString()) }
+
         AlertDialog(
             onDismissRequest = { showEditDialog = false },
-            title = { Text("Edit Anime") },
-            text = { Text("Edit functionality to be implemented") },
+            title = { Text("Update your data for: ${entry.title}") },
+            text = {
+                Column {
+                    // Episode Input
+                    Row {
+                        Text("Episode")
+                        Spacer(modifier = Modifier.width(8.dp))
+                        TextField(
+                            value = episode,
+                            onValueChange = { episode = it },
+                            label = { Text("Episode") },
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                            modifier = Modifier.width(100.dp)
+                        )
+                        Text("of ${entry.episodes}")
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Score Input
+                    Row {
+                        Text("Score")
+                        Spacer(modifier = Modifier.width(8.dp))
+                        TextField(
+                            value = score,
+                            onValueChange = { score = it },
+                            label = { Text("Score") },
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                            modifier = Modifier.width(100.dp)
+                        )
+                    }
+                }
+            },
             confirmButton = {
-                Button(onClick = { showEditDialog = false }) {
+                Button(onClick = {
+                    // Save logic here
+                    val updatedEpisode = episode.toIntOrNull() ?: entry.episodes
+                    val updatedScore = score.toFloatOrNull() ?: entry.score
+                    // Call a function to update the entry with the new values
+                    Logger.log(LogLevel.INFO, "ListScreen", "Updated information for {${entry.title}}")
+                    updateEntry(entry.copy(episodes = updatedEpisode, score = updatedScore))
+                    showEditDialog = false
+                }) {
                     Text("Save")
                 }
             },
@@ -319,6 +363,10 @@ fun AnimeTableRow(entry: AnimeListItem, isCurrentTab: Boolean) {
             }
         )
     }
+}
+
+private fun updateEntry(entry: AnimeListItem) {
+
 }
 
 enum class SortBy {
