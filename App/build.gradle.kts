@@ -31,7 +31,9 @@ kotlin {
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
             implementation("com.typesafe:config:1.4.1")
             implementation("com.moandjiezana.toml:toml4j:0.7.2")
+            implementation("uk.co.caprica:vlcj:4.10.1")
         }
+
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
