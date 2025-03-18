@@ -69,6 +69,7 @@ fun Composer(windowState: WindowState) {
 
                     Screens.PROFILE -> ProfileScreen()
                     Screens.List -> AnimeListScreen()
+                    Screens.PLAYER -> PlayerScreen()
                     Screens.Settings -> SettingsScreen(
                         windowState = windowState,
                         navigateToLogs = { screenActive = Screens.Logs },
