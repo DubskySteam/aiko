@@ -1,10 +1,7 @@
 package dev.dubsky.aiko.components.player
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -34,13 +31,14 @@ fun EmbeddedPlayer(
 ) {
     val factory = remember { { mediaPlayerComponent } }
 
-    LaunchedEffect(url) { mediaPlayer.media().play(url) }
     DisposableEffect(Unit) { onDispose(mediaPlayer::release) }
 
     Box(
         modifier = modifier
             .padding(16.dp)
             .clip(RoundedCornerShape(12.dp))
+            .requiredSize(1280.dp, 720.dp)
+            .fillMaxSize()
     ) {
         SwingPanel(
             factory = { mediaPlayerComponent },
