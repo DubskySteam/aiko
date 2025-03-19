@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.dubsky.aiko.api.AnimeFetcher
@@ -111,13 +112,14 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
                 modifier = Modifier
                     .weight(3f)
                     .aspectRatio(16f / 9f)
-                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color.Black)
+                    .border(3.dp, MaterialTheme.colors.primary)
             ) {
                 EmbeddedPlayer(
                     mediaPlayer = mediaPlayer,
                     mediaPlayerComponent = mediaPlayerComponent,
                     url = playerStream ?: "",
-                    modifier = Modifier.matchParentSize(),
+                    modifier = Modifier.matchParentSize().fillMaxSize(),
                     isFullscreen = isFullscreen,
                     onFullscreenToggle = { isFullscreen = !isFullscreen }
                 )

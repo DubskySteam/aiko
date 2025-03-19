@@ -1,8 +1,10 @@
 package dev.dubsky.aiko.components.player
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -35,10 +37,8 @@ fun EmbeddedPlayer(
 
     Box(
         modifier = modifier
-            .padding(16.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .requiredSize(1280.dp, 720.dp)
             .fillMaxSize()
+            .aspectRatio(16f / 9f)
     ) {
         SwingPanel(
             factory = { mediaPlayerComponent },
