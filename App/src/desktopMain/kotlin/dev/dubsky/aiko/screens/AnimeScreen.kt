@@ -3,6 +3,7 @@ package dev.dubsky.aiko.screens
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
@@ -129,7 +130,7 @@ fun AnimeInfo(
 }
 
 @Composable
-fun AnimeScreen(anime: Anime) {
+fun AnimeScreen(anime: Anime, onPlayerClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -140,6 +141,7 @@ fun AnimeScreen(anime: Anime) {
             modifier = Modifier
                 .padding(32.dp)
                 .fillMaxWidth()
+                .clickable { onPlayerClick() }
         ) {
             AnimeLogo(imgUrl = anime.coverImage)
             AnimeInfo(
@@ -155,52 +157,4 @@ fun AnimeScreen(anime: Anime) {
             AnimeTags(tags = anime.genres)
         }
     }
-}
-
-@Preview
-@Composable
-fun PreviewBanner() {
-    AnimeBanner(imgUrl = "https://s4.anilist.co/file/anilistcdn/media/anime/banner/176496-5oY4k2NRqlYs.jpg")
-}
-
-@Preview
-@Composable
-fun PreviewLogo() {
-    AnimeLogo(imgUrl = "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx110960-4Z8Z3ZQ8Z6Zz.jpg")
-}
-
-@Preview
-@Composable
-fun PreviewAnimeInfo() {
-    AnimeInfo(
-        title = "Solo Leveling",
-        rating = 85,
-        description = "In this world where Hunters with various magical powers battle monsters from invading the defenceless humanity, Sung Jin-Woo was the weakest of all the Hunters...",
-        season = MediaSeason.WINTER,
-        year = 2025
-    )
-}
-
-@Preview
-@Composable
-fun PreviewTags() {
-    AnimeTags(tags = listOf("Action", "Adventure", "Fantasy"))
-}
-
-@Preview
-@Composable
-fun PreviewAnimeScreen() {
-    AnimeScreen(
-        anime = Anime(
-            id = 1,
-            title = "Solo Leveling",
-            imageUrl = "https://s4.anilist.co/file/anilistcdn/media/anime/banner/176496-5oY4k2NRqlYs.jpg",
-            rating = 85,
-            description = "In this world where Hunters with various magical powers battle monsters from invading the defenceless humanity, Sung Jin-Woo was the weakest of all the Hunters, barely able to make a living. However, a mysterious System grants him the power of the 'Player', setting him on a course for an incredible and often times perilous Journey.",
-            season = MediaSeason.WINTER,
-            genres = listOf("Action", "Adventure", "Fantasy"),
-            coverImage = "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx110960-4Z8Z3ZQ8Z6Zz.jpg",
-            seasonYear = 2025
-        )
-    )
 }

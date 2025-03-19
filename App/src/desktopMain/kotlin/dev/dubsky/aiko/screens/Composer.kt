@@ -20,7 +20,7 @@ import kotlin.system.exitProcess
 @Preview
 @Composable
 fun Composer(windowState: WindowState) {
-    var screenActive by remember { mutableStateOf(Screens.List) }
+    var screenActive by remember { mutableStateOf(Screens.Settings) }
     var selectedAnime by remember { mutableStateOf<Anime?>(null) }
     val windowState by remember { mutableStateOf(windowState) }
 
@@ -58,7 +58,12 @@ fun Composer(windowState: WindowState) {
                     }
 
                     Screens.Anime -> {
-                        selectedAnime?.let { AnimeScreen(anime = it) }
+                        selectedAnime?.let { AnimeScreen(
+                            anime = it,
+                            onPlayerClick = {
+                                screenActive = Screens.PLAYER
+                            })
+                        }
                     }
 
                     Screens.Browse -> BrowseScreen(
@@ -69,7 +74,11 @@ fun Composer(windowState: WindowState) {
 
                     Screens.PROFILE -> ProfileScreen()
                     Screens.List -> AnimeListScreen()
-                    Screens.PLAYER -> PlayerScreen()
+                    Screens.PLAYER -> {
+                        selectedAnime?.let { anime ->
+                            PlayerScreen(anime.id, anime.title)
+                        }
+                    }
                     Screens.Settings -> SettingsScreen(
                         windowState = windowState,
                         navigateToLogs = { screenActive = Screens.Logs },
