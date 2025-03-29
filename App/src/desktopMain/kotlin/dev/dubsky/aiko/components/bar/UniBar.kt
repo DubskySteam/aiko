@@ -70,6 +70,9 @@ fun UnifiedBar(
                 NavItem("Profile", Icons.Default.VerifiedUser, currentScreen == Screens.PROFILE) {
                     onScreenSelected(Screens.PROFILE)
                 }
+                NavItem("Player", Icons.Default.PlayCircleFilled, currentScreen == Screens.PLAYER) {
+                    onScreenSelected(Screens.PLAYER)
+                }
                 NavItem("Settings", Icons.Default.Settings, currentScreen == Screens.Settings) {
                     onScreenSelected(Screens.Settings)
                 }

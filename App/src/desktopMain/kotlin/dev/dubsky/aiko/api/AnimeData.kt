@@ -3,14 +3,39 @@ package dev.dubsky.aiko.api
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.ApolloResponse
 import com.apollographql.apollo.api.Optional
-import dev.dubsky.aiko.graphql.GetByFilterQuery
-import dev.dubsky.aiko.graphql.TopAnimeAiringQuery
-import dev.dubsky.aiko.graphql.TopAnimeByRatingQuery
-import dev.dubsky.aiko.graphql.TopAnimeBySeasonQuery
+import com.apollographql.apollo.api.http.HttpRequest
+import com.apollographql.apollo.api.http.HttpResponse
+import com.apollographql.apollo.network.http.HttpInterceptor
+import com.apollographql.apollo.network.http.HttpInterceptorChain
+import dev.dubsky.aiko.config.ConfigManager
+import dev.dubsky.aiko.graphql.*
 import dev.dubsky.aiko.graphql.type.MediaSeason
 import dev.dubsky.aiko.graphql.type.MediaStatus
+import dev.dubsky.aiko.logging.LogLevel
+import dev.dubsky.aiko.logging.Logger
+
+class AuthorizationInterceptor : HttpInterceptor {
+    override suspend fun intercept(request: HttpRequest, chain: HttpInterceptorChain): HttpResponse {
+        Logger.log(LogLevel.INFO, "API", "Attempting to intercept HTTP Call")
+        var token = ConfigManager.config.token.substringBefore('&')
+        val response = chain.proceed(request.newBuilder().addHeader("Authorization", "Bearer $token").build())
+        return if (response.statusCode == 401) {
+            chain.proceed(request.newBuilder().addHeader("Authorization", "Bearer $token").build())
+        } else {
+            response
+        }
+    }
+}
 
 class AnimeData {
+
+
+    private fun buildAuthApolloClient(): ApolloClient {
+        return ApolloClient.Builder()
+            .serverUrl("https://graphql.anilist.co")
+            .addHttpInterceptor(AuthorizationInterceptor())
+            .build()
+    }
 
     private fun buildApolloClient(): ApolloClient {
         return ApolloClient.Builder()
@@ -74,4 +99,21 @@ class AnimeData {
         ).execute()
         return response
     }
+
+    suspend fun GetUserInfo(): ApolloResponse<UserInfoQuery.Data> {
+        val apolloClient = buildAuthApolloClient()
+        val response =
+            apolloClient.query(UserInfoQuery()).execute()
+        Logger.log(LogLevel.INFO, "API", "UserInfo retrieved")
+        return response
+    }
+
+    suspend fun GetUserAnimeList(): ApolloResponse<UserInfoExtendedQuery.Data> {
+        val apolloClient = buildApolloClient()
+        val response = apolloClient.query(UserInfoExtendedQuery(userName = Optional.present("Dubsky"))).execute()
+        Logger.log(LogLevel.INFO, "API", "User animes retrieved")
+        Logger.log(LogLevel.INFO, "API", "data: ${response.data?.MediaListCollection?.lists?.size}")
+        return response
+    }
+
 }

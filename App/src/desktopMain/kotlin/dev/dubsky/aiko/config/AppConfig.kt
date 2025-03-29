@@ -8,5 +8,8 @@ data class AppConfig(
     var Mode: String = "FHD",
     var Logging: Boolean = false,
     var Theme: AppTheme = AppTheme.ORANGE,
-    var token: String = ""
+    var Proxy: String = "",
+    var Api: String = "",
+    var token: String = "",
+    var userName: String = ""
 )

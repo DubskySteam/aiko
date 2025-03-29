@@ -33,6 +33,16 @@ object ConfigManager {
         }
     }
 
+    fun setProxy(proxy: String) {
+        config.Proxy = proxy
+        saveConfig()
+    }
+
+    fun setApi(api: String) {
+        config.Api = api
+        saveConfig()
+    }
+
     fun setLogging(logging: Boolean) {
         config.Logging = logging
         saveConfig()
@@ -50,6 +60,11 @@ object ConfigManager {
 
     fun setToken(token: String) {
         config.token = token
+        saveConfig()
+    }
+
+    fun setUser(name: String) {
+        config.userName = name
         saveConfig()
     }
 

@@ -58,7 +58,12 @@ fun Composer(windowState: WindowState) {
                     }
 
                     Screens.Anime -> {
-                        selectedAnime?.let { AnimeScreen(anime = it) }
+                        selectedAnime?.let { AnimeScreen(
+                            anime = it,
+                            onPlayerClick = {
+                                screenActive = Screens.PLAYER
+                            })
+                        }
                     }
 
                     Screens.Browse -> BrowseScreen(
@@ -67,8 +72,13 @@ fun Composer(windowState: WindowState) {
                             screenActive = Screens.Anime
                         })
 
-                    Screens.PROFILE -> ComingScreen()
-                    Screens.List -> ComingScreen()
+                    Screens.PROFILE -> ProfileScreen()
+                    Screens.List -> AnimeListScreen()
+                    Screens.PLAYER -> {
+                        selectedAnime?.let { anime ->
+                            PlayerScreen(anime.id, anime.title)
+                        }
+                    }
                     Screens.Settings -> SettingsScreen(
                         windowState = windowState,
                         navigateToLogs = { screenActive = Screens.Logs },

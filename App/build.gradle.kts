@@ -31,7 +31,9 @@ kotlin {
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
             implementation("com.typesafe:config:1.4.1")
             implementation("com.moandjiezana.toml:toml4j:0.7.2")
+            implementation("uk.co.caprica:vlcj:4.10.1")
         }
+
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
@@ -56,9 +58,22 @@ compose.desktop {
         mainClass = "dev.dubsky.aiko.EntryKt"
 
         nativeDistributions {
+            windows {
+                includeAllModules = true
+                iconFile.set(project.file("src/commonMain/composeResources/drawable/logo.ico"))
+                menu = true
+                menuGroup = "Dubsky"
+            }
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "dev.dubsky.aiko"
-            packageVersion = "1.4.0"
+            packageName = "Aiko"
+            packageVersion = "1.6.0"
+            description = "Anime watchlist manager and tracker"
+            copyright = "© 2025 dubsky.dev All rights reserved."
+            vendor = "Dubsky"
+            licenseFile.set(project.file("../LICENSE"))
+        }
+        buildTypes.release.proguard {
+            isEnabled = false
         }
     }
 }

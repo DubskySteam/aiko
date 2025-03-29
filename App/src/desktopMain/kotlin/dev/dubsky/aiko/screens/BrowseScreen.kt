@@ -366,7 +366,7 @@ fun BrowseScreen(onAnimeSelected: (Anime) -> Unit = {}) {
                         Text("Any", color = Color.White)
                     }
 
-                    MediaSeason.values().filter { it != MediaSeason.UNKNOWN__ }.forEach { season ->
+                    MediaSeason.entries.filter { it != MediaSeason.UNKNOWN__ }.forEach { season ->
                         DropdownMenuItem(onClick = {
                             filters = filters.copy(season = season)
                             seasonExpanded = false
@@ -484,7 +484,7 @@ fun BrowseScreen(onAnimeSelected: (Anime) -> Unit = {}) {
                         Text("Any", color = Color.White)
                     }
 
-                    MediaStatus.values().filter { it != MediaStatus.UNKNOWN__ }.forEach { status ->
+                    MediaStatus.entries.filter { it != MediaStatus.UNKNOWN__ }.forEach { status ->
                         DropdownMenuItem(onClick = {
                             filters = filters.copy(status = status)
                             statusExpanded = false
