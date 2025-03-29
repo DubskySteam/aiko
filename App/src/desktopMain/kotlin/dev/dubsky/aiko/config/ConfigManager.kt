@@ -38,6 +38,11 @@ object ConfigManager {
         saveConfig()
     }
 
+    fun setApi(api: String) {
+        config.Api = api
+        saveConfig()
+    }
+
     fun setLogging(logging: Boolean) {
         config.Logging = logging
         saveConfig()

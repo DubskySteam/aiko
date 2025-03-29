@@ -1,6 +1,7 @@
 package dev.dubsky.aiko.api
 
 import com.google.gson.Gson
+import dev.dubsky.aiko.config.ConfigManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -10,7 +11,7 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 object Params {
-    const val BASE_API_URL = ""
+    var BASE_API_URL = ConfigManager.config.Api
 }
 
 class AnimeFetcher {

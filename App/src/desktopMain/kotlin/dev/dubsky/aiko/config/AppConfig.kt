@@ -9,6 +9,7 @@ data class AppConfig(
     var Logging: Boolean = false,
     var Theme: AppTheme = AppTheme.ORANGE,
     var Proxy: String = "",
+    var Api: String = "",
     var token: String = "",
     var userName: String = ""
 )

@@ -30,6 +30,7 @@ fun SettingsScreen(
 ) {
     var isLoggingEnabled by remember { mutableStateOf(ConfigManager.config.Logging) }
     var proxy by remember { mutableStateOf(ConfigManager.config.Proxy) }
+    var apiUrl by remember { mutableStateOf(ConfigManager.config.Api) }
 
     Column(
         modifier = Modifier
@@ -156,7 +157,17 @@ fun SettingsScreen(
             )
         }
 
-        SettingsCategory(title = "Proxy") {
+        SettingsCategory(title = "API & Proxy") {
+            TextField(
+                value = apiUrl,
+                onValueChange = {
+                    apiUrl = it
+                    ConfigManager.setApi(it)
+                },
+                label = { Text("API URL") },
+                placeholder = { Text("127.0.0.1") },
+                modifier = Modifier.fillMaxWidth()
+            )
             TextField(
                 value = proxy,
                 onValueChange = {
