@@ -66,9 +66,9 @@ compose.desktop {
             }
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Aiko"
-            packageVersion = "1.5.0"
+            packageVersion = "1.6.0"
             description = "Anime watchlist manager and tracker"
-            copyright = "© 2024 dubsky.dev All rights reserved."
+            copyright = "© 2025 dubsky.dev All rights reserved."
             vendor = "Dubsky"
             licenseFile.set(project.file("../LICENSE"))
         }
