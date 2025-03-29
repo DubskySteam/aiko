@@ -4,10 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonColors
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -32,6 +29,7 @@ fun SettingsScreen(
     currentTheme: AppTheme
 ) {
     var isLoggingEnabled by remember { mutableStateOf(ConfigManager.config.Logging) }
+    var proxy by remember { mutableStateOf(ConfigManager.config.Proxy) }
 
     Column(
         modifier = Modifier
@@ -154,6 +152,19 @@ fun SettingsScreen(
                 dialogMessage = "This will open a browser window to authenticate with AniList.",
                 confirmText = "Authenticate",
                 onConfirm = { do_auth() },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        SettingsCategory(title = "Proxy") {
+            TextField(
+                value = proxy,
+                onValueChange = {
+                    proxy = it
+                    ConfigManager.setProxy(it)
+                },
+                label = { Text("Proxy URL") },
+                placeholder = { Text("127.0.0.1") },
                 modifier = Modifier.fillMaxWidth()
             )
         }

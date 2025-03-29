@@ -33,6 +33,11 @@ object ConfigManager {
         }
     }
 
+    fun setProxy(proxy: String) {
+        config.Proxy = proxy
+        saveConfig()
+    }
+
     fun setLogging(logging: Boolean) {
         config.Logging = logging
         saveConfig()
