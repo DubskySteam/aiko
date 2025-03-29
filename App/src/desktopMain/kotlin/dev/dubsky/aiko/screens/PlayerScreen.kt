@@ -1,6 +1,5 @@
 package dev.dubsky.aiko.screens
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,20 +17,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.dubsky.aiko.api.AnimeFetcher
 import dev.dubsky.aiko.components.player.EmbeddedPlayer
 import dev.dubsky.aiko.components.player.initializeMediaPlayerComponent
 import dev.dubsky.aiko.components.player.mediaPlayer
+import dev.dubsky.aiko.config.ConfigManager
 import dev.dubsky.aiko.logging.LogLevel
 import dev.dubsky.aiko.logging.Logger
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import uk.co.caprica.vlcj.player.base.State
+import uk.co.caprica.vlcj.player.base.TrackDescription
 import java.awt.Desktop
 import java.net.URI
+import java.util.*
+
 
 @Composable
 fun PlayerScreen(anime_id: Int, animeTitle: String) {
@@ -48,6 +49,20 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
     var totalTime by remember { mutableStateOf(0L) }
     val coroutineScope = rememberCoroutineScope()
 
+    fun getProxyUrl(videoUrl: String, refererUrl: String): String {
+        val combinedUrl = "$videoUrl|$refererUrl"
+        val base64EncodedUrl = Base64.getEncoder().encodeToString(combinedUrl.toByteArray())
+        return "http://${ConfigManager.config.Proxy}:80/$base64EncodedUrl.m3u8"
+    }
+
+    fun getSubtitleUrl(streamInfo: AnimeFetcher.StreamInfo): String? {
+        return streamInfo.data.tracks
+            .firstOrNull { track ->
+                track.kind == "captions" && (track.isDefault || track.label == "English")
+            }
+            ?.file
+    }
+
     LaunchedEffect(animeTitle) {
         coroutineScope.launch {
             try {
@@ -57,7 +72,6 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
                 if (animeId != null) {
                     val episodeList = animeFetcher.getEpisodeList(animeId!!)
                     episodes = episodeList.getOrNull()?.data?.episodes
-                    mediaPlayer.media().play("https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.mp4/.m3u8")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -71,9 +85,31 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
                 try {
                     val animeFetcher = AnimeFetcher()
                     val streamInfo = animeFetcher.getStreamInfo(currentEpisode!!.episodeId)
-                    playerStream = streamInfo.getOrNull()?.data?.sources?.firstOrNull()?.url
-                    if (playerStream != null) {
-                        mediaPlayer.media().play(playerStream)
+                    val directStreamUrl = streamInfo.getOrNull()?.data?.sources?.firstOrNull()?.url
+                    if (directStreamUrl != null) {
+                        val refererUrl = ""
+                        val proxyStreamUrl = if (ConfigManager.config.Proxy != "") getProxyUrl(directStreamUrl, refererUrl) else directStreamUrl
+                        playerStream = proxyStreamUrl
+                        Logger.log(LogLevel.INFO, "Player", "Proxy Stream URL loaded")
+
+                        val subtitleUrl = getSubtitleUrl(streamInfo.getOrNull()!!)
+                        if (subtitleUrl != null) {
+                            Logger.log(LogLevel.INFO, "Player", "Subtitle loaded")
+                            if (playerStream != null) {
+                                mediaPlayer.media().play(playerStream)
+                            }
+                            val tracks: List<TrackDescription> = mediaPlayer.subpictures().trackDescriptions();
+                            val trackId = tracks.
+                                firstOrNull { it.description() != "Disabled"}
+                                ?.id()
+                            if (trackId != null) {
+                                Logger.log(LogLevel.INFO, "Player", "Set track ID to $trackId")
+                                mediaPlayer.subpictures().setTrack(trackId.toInt())
+                            }
+                            mediaPlayer.subpictures().setSubTitleUri(URI(subtitleUrl).toString())
+                        } else {
+                            Logger.log(LogLevel.INFO, "Player", "Subtitle not found")
+                        }
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -209,11 +245,12 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
                 }
 
                 IconButton(onClick = {
-                    if (mediaPlayer.media().info().state() == State.PAUSED) {
-                        mediaPlayer.controls().play()
-                    } else {
-                        mediaPlayer.controls().pause()
-                    }
+                    println(mediaPlayer.subpictures().trackDescriptions());
+                    //if (mediaPlayer.media().info().state() == State.PAUSED) {
+                    //    mediaPlayer.controls().play()
+                    //} else {
+                    //    mediaPlayer.controls().pause()
+                    //}
                 }) {
                     Icon(Icons.Default.PlayCircle, contentDescription = "Play/Pause")
                 }
