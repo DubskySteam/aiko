@@ -38,6 +38,11 @@ object ConfigManager {
         saveConfig()
     }
 
+    fun setRefer(refer: String) {
+        config.Refer = refer
+        saveConfig()
+    }
+
     fun setApi(api: String) {
         config.Api = api
         saveConfig()

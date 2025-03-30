@@ -31,6 +31,7 @@ fun SettingsScreen(
     var isLoggingEnabled by remember { mutableStateOf(ConfigManager.config.Logging) }
     var proxy by remember { mutableStateOf(ConfigManager.config.Proxy) }
     var apiUrl by remember { mutableStateOf(ConfigManager.config.Api) }
+    var referUrl by remember { mutableStateOf(ConfigManager.config.Refer) }
 
     Column(
         modifier = Modifier
@@ -176,6 +177,16 @@ fun SettingsScreen(
                 },
                 label = { Text("Proxy URL") },
                 placeholder = { Text("127.0.0.1") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            TextField(
+                value = referUrl,
+                onValueChange = {
+                    referUrl = it
+                    ConfigManager.setRefer(it)
+                },
+                label = { Text("Refer URL") },
+                placeholder = { Text("") },
                 modifier = Modifier.fillMaxWidth()
             )
         }

@@ -28,6 +28,7 @@ import dev.dubsky.aiko.logging.LogLevel
 import dev.dubsky.aiko.logging.Logger
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import uk.co.caprica.vlcj.player.base.State
 import uk.co.caprica.vlcj.player.base.TrackDescription
 import java.awt.Desktop
 import java.net.URI
@@ -52,7 +53,9 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
     fun getProxyUrl(videoUrl: String, refererUrl: String): String {
         val combinedUrl = "$videoUrl|$refererUrl"
         val base64EncodedUrl = Base64.getEncoder().encodeToString(combinedUrl.toByteArray())
-        return "http://${ConfigManager.config.Proxy}:80/$base64EncodedUrl.m3u8"
+        Logger.log(LogLevel.INFO, "PlayerScreen", "Base Proxy URL: $videoUrl | $refererUrl")
+        Logger.log(LogLevel.INFO, "PlayerScreen", "Encoded Proxy URL: ${ConfigManager.config.Proxy}/$base64EncodedUrl.m3u8")
+        return "${ConfigManager.config.Proxy}/$base64EncodedUrl.m3u8"
     }
 
     fun getSubtitleUrl(streamInfo: AnimeFetcher.StreamInfo): String? {
@@ -87,7 +90,7 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
                     val streamInfo = animeFetcher.getStreamInfo(currentEpisode!!.episodeId)
                     val directStreamUrl = streamInfo.getOrNull()?.data?.sources?.firstOrNull()?.url
                     if (directStreamUrl != null) {
-                        val refererUrl = ""
+                        val refererUrl = ConfigManager.config.Refer
                         val proxyStreamUrl = if (ConfigManager.config.Proxy != "") getProxyUrl(directStreamUrl, refererUrl) else directStreamUrl
                         playerStream = proxyStreamUrl
                         Logger.log(LogLevel.INFO, "Player", "Proxy Stream URL loaded")
@@ -245,12 +248,11 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
                 }
 
                 IconButton(onClick = {
-                    println(mediaPlayer.subpictures().trackDescriptions());
-                    //if (mediaPlayer.media().info().state() == State.PAUSED) {
-                    //    mediaPlayer.controls().play()
-                    //} else {
-                    //    mediaPlayer.controls().pause()
-                    //}
+                    if (mediaPlayer.media().info().state() == State.PAUSED) {
+                        mediaPlayer.controls().play()
+                    } else {
+                        mediaPlayer.controls().pause()
+                    }
                 }) {
                     Icon(Icons.Default.PlayCircle, contentDescription = "Play/Pause")
                 }
