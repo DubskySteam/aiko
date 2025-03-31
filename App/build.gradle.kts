@@ -63,6 +63,7 @@ compose.desktop {
                 iconFile.set(project.file("src/commonMain/composeResources/drawable/logo.ico"))
                 menu = true
                 menuGroup = "Dubsky"
+                perUserInstall = true
             }
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Aiko"
