@@ -34,32 +34,42 @@ object ConfigManager {
     }
 
     fun setProxy(proxy: String) {
-        config.Proxy = proxy
+        config.proxy = proxy
+        saveConfig()
+    }
+
+    fun setRefer(refer: String) {
+        config.refer = refer
+        saveConfig()
+    }
+
+    fun setAutoUpdate(autoUpdate: Boolean) {
+        config.autoUpdate = autoUpdate
         saveConfig()
     }
 
     fun setApi(api: String) {
-        config.Api = api
+        config.api = api
         saveConfig()
     }
 
     fun setLogging(logging: Boolean) {
-        config.Logging = logging
+        config.logging = logging
         saveConfig()
     }
 
     fun setTheme(theme: AppTheme) {
-        config.Theme = theme
+        config.theme = theme
         saveConfig()
     }
 
-    fun setMode(mode: String) {
-        config.Mode = mode
+    fun setResolution(resolution: String) {
+        config.resolution = resolution
         saveConfig()
     }
 
     fun setToken(token: String) {
-        config.token = token
+        config.authToken = token
         saveConfig()
     }
 

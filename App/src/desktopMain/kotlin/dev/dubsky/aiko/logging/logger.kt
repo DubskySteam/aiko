@@ -11,7 +11,7 @@ object Logger {
     private val logDirectory = "${System.getenv("AppData")}/Aiko/logs"
     private val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
     private val timestampFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-    var DEBUG: Boolean = ConfigManager.config.Logging
+    var DEBUG: Boolean = ConfigManager.config.logging
 
     init {
         File(logDirectory).mkdirs()

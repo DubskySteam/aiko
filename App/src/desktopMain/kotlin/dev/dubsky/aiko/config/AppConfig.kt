@@ -1,15 +1,15 @@
 package dev.dubsky.aiko.config
 
 import dev.dubsky.aiko.theme.AppTheme
-import kotlinx.serialization.Serializable
 
-@Serializable
 data class AppConfig(
-    var Mode: String = "FHD",
-    var Logging: Boolean = false,
-    var Theme: AppTheme = AppTheme.ORANGE,
-    var Proxy: String = "",
-    var Api: String = "",
-    var token: String = "",
+    var resolution: String = "FHD",
+    var logging: Boolean = false,
+    var theme: AppTheme = AppTheme.ORANGE,
+    var autoUpdate: Boolean = false,
+    var proxy: String = "",
+    var refer: String = "",
+    var api: String = "",
+    var authToken: String = "",
     var userName: String = ""
 )

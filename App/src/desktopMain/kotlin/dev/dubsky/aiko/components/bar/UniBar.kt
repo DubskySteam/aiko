@@ -41,7 +41,7 @@ fun UnifiedBar(
         ) {
             Text(
                 text = buildAnnotatedString {
-                    withStyle(SpanStyle(color = Color(0xFFFFA500))) {
+                    withStyle(SpanStyle(color = MaterialTheme.colors.primary)) {
                         append("A")
                     }
                     append("iko")
@@ -89,7 +89,7 @@ fun UnifiedBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(1.dp)
-                .background(Color(0xFFFFA500))
+                .background(MaterialTheme.colors.primary)
         )
     }
 }
@@ -101,8 +101,8 @@ fun NavItem(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    val textColor = if (isSelected) Color(0xFFFFA500) else Color.White.copy(alpha = 0.8f)
-    val iconColor = if (isSelected) Color(0xFFFFA500) else Color.White.copy(alpha = 0.8f)
+    val textColor = if (isSelected) MaterialTheme.colors.primary else Color.White.copy(alpha = 0.8f)
+    val iconColor = if (isSelected) MaterialTheme.colors.primary else Color.White.copy(alpha = 0.8f)
 
     Row(
         modifier = Modifier.clickable(onClick = onClick),

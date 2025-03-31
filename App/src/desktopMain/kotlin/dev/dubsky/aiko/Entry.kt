@@ -21,20 +21,20 @@ import org.jetbrains.compose.resources.painterResource
 
 fun main() = application {
     var screenSize = Toolkit.getDefaultToolkit().screenSize
-    var screenWidth = if (ConfigManager.config.Mode == "WQHD") 1920.dp else 1280.dp
-    var screenHeight = if (ConfigManager.config.Mode == "WQHD") 1080.dp else 720.dp
+    var screenWidth = if (ConfigManager.config.resolution == "WQHD") 1920.dp else 1280.dp
+    var screenHeight = if (ConfigManager.config.resolution == "WQHD") 1080.dp else 720.dp
     var windowState = WindowState(
         placement = WindowPlacement.Floating,
         size = DpSize(screenWidth, screenHeight),
     )
 
-    if (ConfigManager.config.Logging) {
+    if (ConfigManager.config.logging) {
         Logger.log(LogLevel.INFO, "Entry",
             "Starting with config: " +
-            "<Resolution: ${ConfigManager.config.Mode}> " +
-            "<Logging: ${ConfigManager.config.Logging}> " +
-            "<Theme: ${ConfigManager.config.Theme}>  " +
-            "<Token exists: ${ConfigManager.config.token != ""}>"
+            "<Resolution: ${ConfigManager.config.resolution}> " +
+            "<Logging: ${ConfigManager.config.logging}> " +
+            "<Theme: ${ConfigManager.config.theme}>  " +
+            "<Token exists: ${ConfigManager.config.authToken != ""}>"
         )
     }
 

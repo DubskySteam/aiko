@@ -17,7 +17,7 @@ import dev.dubsky.aiko.logging.Logger
 class AuthorizationInterceptor : HttpInterceptor {
     override suspend fun intercept(request: HttpRequest, chain: HttpInterceptorChain): HttpResponse {
         Logger.log(LogLevel.INFO, "API", "Attempting to intercept HTTP Call")
-        var token = ConfigManager.config.token.substringBefore('&')
+        var token = ConfigManager.config.authToken.substringBefore('&')
         val response = chain.proceed(request.newBuilder().addHeader("Authorization", "Bearer $token").build())
         return if (response.statusCode == 401) {
             chain.proceed(request.newBuilder().addHeader("Authorization", "Bearer $token").build())

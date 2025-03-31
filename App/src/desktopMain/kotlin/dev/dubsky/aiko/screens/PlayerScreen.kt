@@ -9,8 +9,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.*
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +33,7 @@ import dev.dubsky.aiko.logging.LogLevel
 import dev.dubsky.aiko.logging.Logger
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import uk.co.caprica.vlcj.player.base.State
 import uk.co.caprica.vlcj.player.base.TrackDescription
 import java.awt.Desktop
 import java.net.URI
@@ -52,7 +58,13 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
     fun getProxyUrl(videoUrl: String, refererUrl: String): String {
         val combinedUrl = "$videoUrl|$refererUrl"
         val base64EncodedUrl = Base64.getEncoder().encodeToString(combinedUrl.toByteArray())
-        return "http://${ConfigManager.config.Proxy}:80/$base64EncodedUrl.m3u8"
+        Logger.log(LogLevel.INFO, "PlayerScreen", "Base Proxy URL: $videoUrl | $refererUrl")
+        Logger.log(
+            LogLevel.INFO,
+            "PlayerScreen",
+            "Encoded Proxy URL: ${ConfigManager.config.proxy}/$base64EncodedUrl.m3u8"
+        )
+        return "${ConfigManager.config.proxy}/$base64EncodedUrl.m3u8"
     }
 
     fun getSubtitleUrl(streamInfo: AnimeFetcher.StreamInfo): String? {
@@ -87,8 +99,11 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
                     val streamInfo = animeFetcher.getStreamInfo(currentEpisode!!.episodeId)
                     val directStreamUrl = streamInfo.getOrNull()?.data?.sources?.firstOrNull()?.url
                     if (directStreamUrl != null) {
-                        val refererUrl = ""
-                        val proxyStreamUrl = if (ConfigManager.config.Proxy != "") getProxyUrl(directStreamUrl, refererUrl) else directStreamUrl
+                        val refererUrl = ConfigManager.config.refer
+                        val proxyStreamUrl = if (ConfigManager.config.proxy != "") getProxyUrl(
+                            directStreamUrl,
+                            refererUrl
+                        ) else directStreamUrl
                         playerStream = proxyStreamUrl
                         Logger.log(LogLevel.INFO, "Player", "Proxy Stream URL loaded")
 
@@ -99,8 +114,7 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
                                 mediaPlayer.media().play(playerStream)
                             }
                             val tracks: List<TrackDescription> = mediaPlayer.subpictures().trackDescriptions();
-                            val trackId = tracks.
-                                firstOrNull { it.description() != "Disabled"}
+                            val trackId = tracks.firstOrNull { it.description() != "Disabled" }
                                 ?.id()
                             if (trackId != null) {
                                 Logger.log(LogLevel.INFO, "Player", "Set track ID to $trackId")
@@ -212,7 +226,8 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
         if (!isFullscreen) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = currentEpisode?.let { "${animeTitle.toString()} | Episode ${it.number}: ${it.title}" } ?: "$animeTitle | No Episode Selected",
+                text = currentEpisode?.let { "${animeTitle.toString()} | Episode ${it.number}: ${it.title}" }
+                    ?: "$animeTitle | No Episode Selected",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colors.onSurface
@@ -245,12 +260,11 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
                 }
 
                 IconButton(onClick = {
-                    println(mediaPlayer.subpictures().trackDescriptions());
-                    //if (mediaPlayer.media().info().state() == State.PAUSED) {
-                    //    mediaPlayer.controls().play()
-                    //} else {
-                    //    mediaPlayer.controls().pause()
-                    //}
+                    if (mediaPlayer.media().info().state() == State.PAUSED) {
+                        mediaPlayer.controls().play()
+                    } else {
+                        mediaPlayer.controls().pause()
+                    }
                 }) {
                     Icon(Icons.Default.PlayCircle, contentDescription = "Play/Pause")
                 }
@@ -272,8 +286,7 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
                     value = volume,
                     onValueChange = { volume = it },
                     valueRange = 0f..100f,
-                    modifier = Modifier.width(220.dp)
-                    , colors = SliderDefaults.colors(
+                    modifier = Modifier.width(220.dp), colors = SliderDefaults.colors(
                         activeTrackColor = MaterialTheme.colors.background,
                         inactiveTrackColor = MaterialTheme.colors.background.copy(alpha = 0.5f),
                         thumbColor = MaterialTheme.colors.background
