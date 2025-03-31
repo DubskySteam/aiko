@@ -34,7 +34,7 @@ data class AnimeListItem(
     val title: String? = "Unknown",
     val episodes: Int? = 0,
     val score: Float? = 0f,
-    val progress: Int? = 0
+    var progress: Int = 0
 )
 
 data class AnimeListCategory(
@@ -52,7 +52,7 @@ private fun parseAnimeList(response: ApolloResponse<UserInfoExtendedQuery.Data>)
                     title = entry?.media?.title?.english ?: entry?.media?.title?.native,
                     episodes = entry?.media?.episodes,
                     score = entry?.score?.toFloat(),
-                    progress = entry?.progress
+                    progress = entry?.progress ?: 0
                 )
             }
         )
@@ -271,7 +271,7 @@ fun AnimeTableRow(entry: AnimeListItem, isCurrentTab: Boolean) {
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = entry.progress?.toString() ?: "-",
+                text = entry.progress.toString(),
                 textAlign = TextAlign.Center,
                 color = Color.Gray
             )
@@ -281,14 +281,19 @@ fun AnimeTableRow(entry: AnimeListItem, isCurrentTab: Boolean) {
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add Episode",
                     modifier = Modifier.size(20.dp).clickable {
-                        if (entry.progress!! < entry.episodes!!) {
-                            Logger.log(LogLevel.INFO, "AnimeList", "Adding +1 episode to {${entry.title}}")
-                        } else {
-                            Logger.log(
-                                LogLevel.WARN,
-                                "AnimeList",
-                                "Failed to +1 episode to {${entry.title}} - Already at latest episode"
-                            )
+                        try {
+                            if (entry.progress < entry.episodes!!) {
+                                entry.progress += 1
+                                Logger.log(LogLevel.INFO, "AnimeList", "Adding +1 episode to [${entry.title}] - Episode: ${entry.progress}")
+                            } else {
+                                Logger.log(
+                                    LogLevel.WARN,
+                                    "AnimeList",
+                                    "Failed to +1 episode to {${entry.title}} - Already at latest episode"
+                                )
+                            }
+                        } catch (e: Exception) {
+                            Logger.log(LogLevel.ERROR, "ListScreen", "Error while adding episode to {${entry.title}}\n ${e.message}")
                         }
                     },
                     tint = MaterialTheme.colors.primary
@@ -305,7 +310,7 @@ fun AnimeTableRow(entry: AnimeListItem, isCurrentTab: Boolean) {
     }
 
     if (showEditDialog) {
-        var episode by remember { mutableStateOf(entry.episodes.toString()) }
+        var episode by remember { mutableStateOf(entry.progress.toString()) }
         var score by remember { mutableStateOf(entry.score.toString()) }
 
         AlertDialog(
@@ -345,11 +350,9 @@ fun AnimeTableRow(entry: AnimeListItem, isCurrentTab: Boolean) {
             },
             confirmButton = {
                 Button(onClick = {
-                    // Save logic here
-                    val updatedEpisode = episode.toIntOrNull() ?: entry.episodes
+                    val updatedEpisode = episode.toIntOrNull() ?: entry.progress
                     val updatedScore = score.toFloatOrNull() ?: entry.score
-                    // Call a function to update the entry with the new values
-                    Logger.log(LogLevel.INFO, "ListScreen", "Updated information for {${entry.title}}")
+                    Logger.log(LogLevel.INFO, "ListScreen", "Updated information for [${entry.title}] Episode: $updatedEpisode - Score: $updatedScore")
                     updateEntry(entry.copy(episodes = updatedEpisode, score = updatedScore))
                     showEditDialog = false
                 }) {
