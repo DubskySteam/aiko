@@ -11,7 +11,7 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 object Params {
-    var BASE_API_URL = ConfigManager.config.Api
+    var BASE_API_URL = ConfigManager.config.api
 }
 
 class AnimeFetcher {

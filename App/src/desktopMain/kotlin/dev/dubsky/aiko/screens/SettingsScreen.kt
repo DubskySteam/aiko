@@ -28,10 +28,11 @@ fun SettingsScreen(
     updateTheme: (AppTheme) -> Unit,
     currentTheme: AppTheme
 ) {
-    var isLoggingEnabled by remember { mutableStateOf(ConfigManager.config.Logging) }
-    var proxy by remember { mutableStateOf(ConfigManager.config.Proxy) }
-    var apiUrl by remember { mutableStateOf(ConfigManager.config.Api) }
-    var referUrl by remember { mutableStateOf(ConfigManager.config.Refer) }
+    var isLoggingEnabled by remember { mutableStateOf(ConfigManager.config.logging) }
+    var isAutoUpdateEnabled by remember { mutableStateOf(ConfigManager.config.autoUpdate) }
+    var proxy by remember { mutableStateOf(ConfigManager.config.proxy) }
+    var apiUrl by remember { mutableStateOf(ConfigManager.config.api) }
+    var referUrl by remember { mutableStateOf(ConfigManager.config.refer) }
 
     Column(
         modifier = Modifier
@@ -50,7 +51,7 @@ fun SettingsScreen(
                 Button(
                     onClick = {
                         Logger.log(LogLevel.INFO, "SettingsScreen", "Attempting to set resolution > WQHD")
-                        ConfigManager.setMode("WQHD")
+                        ConfigManager.setResolution("WQHD")
                         ConfigManager.saveConfig()
                         windowState.size = DpSize(1920.dp, 1080.dp)
                         Logger.log(LogLevel.INFO, "SettingsScreen", "Attempting to set resolution > WQHD")
@@ -62,7 +63,7 @@ fun SettingsScreen(
                 Button(
                     onClick = {
                         Logger.log(LogLevel.INFO, "SettingsScreen", "Attempting to set resolution > FHD")
-                        ConfigManager.setMode("FHD")
+                        ConfigManager.setResolution("FHD")
                         ConfigManager.saveConfig()
                         windowState.size = DpSize(1280.dp, 720.dp)
                         Logger.log(LogLevel.INFO, "SettingsScreen", "Set resolution to FHD")
@@ -158,7 +159,10 @@ fun SettingsScreen(
             )
         }
 
-        SettingsCategory(title = "API & Proxy") {
+        SettingsCategory(title = "Player - API & Proxy") {
+            Text(
+                text = "If you have questions about what to put here, please refer to the tutorial in the Discord server.",
+            )
             TextField(
                 value = apiUrl,
                 onValueChange = {
@@ -189,6 +193,39 @@ fun SettingsScreen(
                 placeholder = { Text("") },
                 modifier = Modifier.fillMaxWidth()
             )
+            Text(
+                text = "Automatically update your watchlist when you watch an episode?"
+            )
+            SingleChoiceSegmentedButtonRow {
+                listOf(true, false).forEachIndexed { index, entry ->
+                    SegmentedButton(
+                        shape = SegmentedButtonDefaults.itemShape(
+                            index = index,
+                            count = 2
+                        ),
+                        onClick = {
+                            isAutoUpdateEnabled = entry
+                            ConfigManager.setAutoUpdate(entry)
+                        },
+                        selected = isAutoUpdateEnabled == entry,
+                        label = { Text(entry.toString()) },
+                        colors = SegmentedButtonColors(
+                            activeContainerColor = MaterialTheme.colors.background,
+                            activeContentColor = MaterialTheme.colors.primary,
+                            activeBorderColor = MaterialTheme.colors.background,
+                            inactiveContainerColor = MaterialTheme.colors.background,
+                            inactiveContentColor = MaterialTheme.colors.onSurface,
+                            inactiveBorderColor = MaterialTheme.colors.background,
+                            disabledActiveContainerColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
+                            disabledActiveContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.38f),
+                            disabledActiveBorderColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
+                            disabledInactiveContainerColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
+                            disabledInactiveContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.38f),
+                            disabledInactiveBorderColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
+                        )
+                    )
+                }
+            }
         }
     }
 }

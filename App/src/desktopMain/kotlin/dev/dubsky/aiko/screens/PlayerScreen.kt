@@ -62,9 +62,9 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
         Logger.log(
             LogLevel.INFO,
             "PlayerScreen",
-            "Encoded Proxy URL: ${ConfigManager.config.Proxy}/$base64EncodedUrl.m3u8"
+            "Encoded Proxy URL: ${ConfigManager.config.proxy}/$base64EncodedUrl.m3u8"
         )
-        return "${ConfigManager.config.Proxy}/$base64EncodedUrl.m3u8"
+        return "${ConfigManager.config.proxy}/$base64EncodedUrl.m3u8"
     }
 
     fun getSubtitleUrl(streamInfo: AnimeFetcher.StreamInfo): String? {
@@ -99,8 +99,8 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
                     val streamInfo = animeFetcher.getStreamInfo(currentEpisode!!.episodeId)
                     val directStreamUrl = streamInfo.getOrNull()?.data?.sources?.firstOrNull()?.url
                     if (directStreamUrl != null) {
-                        val refererUrl = ConfigManager.config.Refer
-                        val proxyStreamUrl = if (ConfigManager.config.Proxy != "") getProxyUrl(
+                        val refererUrl = ConfigManager.config.refer
+                        val proxyStreamUrl = if (ConfigManager.config.proxy != "") getProxyUrl(
                             directStreamUrl,
                             refererUrl
                         ) else directStreamUrl

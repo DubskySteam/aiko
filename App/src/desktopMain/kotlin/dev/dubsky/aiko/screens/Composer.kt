@@ -24,7 +24,7 @@ fun Composer(windowState: WindowState) {
     var selectedAnime by remember { mutableStateOf<Anime?>(null) }
     val windowState by remember { mutableStateOf(windowState) }
 
-    var themeState = remember { mutableStateOf(ConfigManager.config.Theme) }
+    var themeState = remember { mutableStateOf(ConfigManager.config.theme) }
 
     ThemeManager.currentTheme = themeState
 

@@ -66,7 +66,7 @@ fun openBrowser() {
 fun do_auth() {
 
     Logger.log(LogLevel.INFO, "Auth", "Starting anilist authentication...")
-    if (ConfigManager.config.token != "") {
+    if (ConfigManager.config.authToken != "") {
         Logger.log(LogLevel.INFO, "Auth", "Authentication not needed")
         return
     }
