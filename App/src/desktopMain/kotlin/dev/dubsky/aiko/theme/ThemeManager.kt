@@ -8,7 +8,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.graphics.Color
 
 enum class AppTheme {
-    LIGHT, DARK, CUSTOM, ORANGE
+    LIGHT, DARK, CUSTOM, ORANGE, PURPLE
 }
 
 object ThemeManager {
@@ -54,6 +54,17 @@ private val DarkOrange = darkColors(
     onSurface = Color.White
 )
 
+private val DarkPurple = darkColors(
+    primary = Color(0xffa21fff),
+    primaryVariant = Color(0xff8420ff),
+    secondary = Color(0xff1e1c1c),
+    background = Color(0xFF11151C),
+    surface = Color(0xFF1E1E1E),
+    onPrimary = Color.Black,
+    onBackground = Color.White,
+    onSurface = Color.White
+)
+
 @Composable
 fun AppThemedContent(content: @Composable () -> Unit) {
     val theme = ThemeManager.currentTheme?.value ?: AppTheme.LIGHT
@@ -62,6 +73,7 @@ fun AppThemedContent(content: @Composable () -> Unit) {
         AppTheme.DARK -> DarkColors
         AppTheme.CUSTOM -> CustomColors
         AppTheme.ORANGE -> DarkOrange
+        AppTheme.PURPLE -> DarkPurple
     }
 
     MaterialTheme(colors = colors) {
