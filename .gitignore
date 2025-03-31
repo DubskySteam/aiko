@@ -1,3 +1,6 @@
+### Manifest files for package manager
+PKG
+
 *.iml
 .kotlin
 .gradle
