@@ -9,9 +9,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Apartment
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
@@ -34,7 +31,10 @@ import dev.dubsky.aiko.data.Anime
 import dev.dubsky.aiko.graphql.type.MediaSeason
 import dev.dubsky.aiko.logging.LogLevel
 import dev.dubsky.aiko.logging.Logger
+import dev.dubsky.aiko.resources.Res
+import dev.dubsky.aiko.resources.discord
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
 import java.awt.Desktop
 import java.net.URI
 
@@ -125,14 +125,22 @@ fun HomeScreen(
                         if (Desktop.isDesktopSupported()) {
                             Desktop.getDesktop().browse(URI("https://github.com/dubskysteam/aiko/releases"))
                         } else {
-                            Logger.log(LogLevel.ERROR, "HomeScreen", "Opening GitHub link is not supported on this platform.")
+                            Logger.log(
+                                LogLevel.ERROR,
+                                "HomeScreen",
+                                "Opening GitHub link is not supported on this platform."
+                            )
                         }
                     },
                     onPatchNotesClick = {
                         if (Desktop.isDesktopSupported()) {
                             Desktop.getDesktop().browse(URI("https://github.com/dubskysteam/aiko/releases"))
                         } else {
-                            Logger.log(LogLevel.ERROR, "HomeScreen", "Opening GitHub link is not supported on this platform.")
+                            Logger.log(
+                                LogLevel.ERROR,
+                                "HomeScreen",
+                                "Opening GitHub link is not supported on this platform."
+                            )
                         }
                     }
                 )
@@ -143,7 +151,11 @@ fun HomeScreen(
                     if (Desktop.isDesktopSupported()) {
                         Desktop.getDesktop().browse(URI("https://discord.gg/KdesEpJMqj"))
                     } else {
-                        Logger.log(LogLevel.ERROR, "HomeScreen", "Opening Discord link is not supported on this platform.")
+                        Logger.log(
+                            LogLevel.ERROR,
+                            "HomeScreen",
+                            "Opening Discord link is not supported on this platform."
+                        )
                     }
                 },
                 modifier = Modifier
@@ -156,15 +168,16 @@ fun HomeScreen(
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(vertical = 4.dp)
                 ) {
                     Icon(
-                        Icons.Default.Apartment,
+                        painter = painterResource(Res.drawable.discord),
                         contentDescription = "Discord",
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Join Our Discord")
+                    Text(
+                        "Join Our Discord",
+                    )
                 }
             }
 
@@ -175,11 +188,14 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
-                shape = RoundedCornerShape(12.dp)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
             ) {
                 Text(
                     text = "Browse Anime",
-                    style = MaterialTheme.typography.labelLarge
+                    style = MaterialTheme.typography.labelLarge,
+                    fontSize = 16.sp
                 )
             }
 
@@ -219,7 +235,8 @@ private fun VersionInfoRow(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = "v0.6.3",
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
@@ -237,7 +254,7 @@ private fun VersionInfoRow(
                     text = {
                         Text(
                             text = "Current: v0.6.3",
-                            style = MaterialTheme.typography.labelMedium
+                            style = MaterialTheme.typography.labelLarge
                         )
                     },
                     onClick = { showVersionMenu = false }
@@ -346,17 +363,17 @@ fun AnimeCard(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(8.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .padding(horizontal = 8.dp, vertical = 4.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
-            Text(
-                text = "${anime.rating}%",
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold
-            )
-        }
+                Text(
+                    text = "${anime.rating}%",
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
 }
