@@ -27,6 +27,7 @@ import dev.dubsky.aiko.api.AnimeData
 import dev.dubsky.aiko.api.MemCache
 import dev.dubsky.aiko.api.MemCache.topAiringAnime
 import dev.dubsky.aiko.api.MemCache.topSeasonalAnime
+import dev.dubsky.aiko.config.AppVersion
 import dev.dubsky.aiko.data.Anime
 import dev.dubsky.aiko.graphql.type.MediaSeason
 import dev.dubsky.aiko.logging.LogLevel
@@ -43,12 +44,13 @@ fun HomeScreen(
     onAnimeSelected: (Anime) -> Unit = {},
     onBrowseClick: () -> Unit = {},
 ) {
+    var versionCheck by remember { mutableStateOf<AppVersion.VersionCheckResult?>(null) }
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
-    val updateAvailable by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
+            versionCheck = AppVersion.checkForUpdates()
             if (MemCache.needsRefresh()) {
                 val airingResponse = AnimeData().getTopAiringAnime()
                 val seasonalResponse = AnimeData().getTopAiringAnimeBySeason()
@@ -119,8 +121,7 @@ fun HomeScreen(
                 )
 
                 VersionInfoRow(
-                    updateAvailable = updateAvailable,
-                    //TODO: add actual update check
+                    updateAvailable = versionCheck is AppVersion.VersionCheckResult.UpdateAvailable,
                     onUpdateClick = {
                         if (Desktop.isDesktopSupported()) {
                             Desktop.getDesktop().browse(URI("https://github.com/dubskysteam/aiko/releases"))
@@ -234,7 +235,7 @@ private fun VersionInfoRow(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "v0.6.3",
+                        text = AppVersion.CURRENT_VERSION,
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onBackground
                     )
@@ -253,7 +254,7 @@ private fun VersionInfoRow(
                 DropdownMenuItem(
                     text = {
                         Text(
-                            text = "Current: v0.6.3",
+                            text = "Current: ${AppVersion.CURRENT_VERSION}",
                             style = MaterialTheme.typography.labelLarge
                         )
                     },
@@ -276,8 +277,8 @@ private fun VersionInfoRow(
             enabled = updateAvailable,
             modifier = Modifier.height(36.dp),
             colors = ButtonDefaults.buttonColors(
-                //containerColor = if (updateAvailable) MaterialTheme.colorScheme.tertiary
-                //else MaterialTheme.colorScheme.surfaceVariant,
+                containerColor = if (updateAvailable) Color.Red
+                    else MaterialTheme.colorScheme.surface,
                 contentColor = if (updateAvailable) MaterialTheme.colorScheme.onTertiary
                 else MaterialTheme.colorScheme.onSurfaceVariant
             )
