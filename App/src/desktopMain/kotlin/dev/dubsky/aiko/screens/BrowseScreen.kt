@@ -359,57 +359,80 @@ fun AnimeCardO(
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Column {
+        Box(modifier = Modifier.fillMaxSize()) {
+            AsyncImage(
+                model = anime.coverImage,
+                contentDescription = anime.title,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(0.7f)
-            ) {
-                AsyncImage(
-                    model = anime.coverImage,
-                    contentDescription = anime.title,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Transparent,
-                                    Color.Black.copy(alpha = 0.7f)
-                                ),
-                                startY = 0.6f
-                            )
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                Color.Black.copy(alpha = 0.7f)
+                            ),
+                            startY = 0.6f
                         )
-                )
-            }
+                    )
+            )
 
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .align(Alignment.BottomStart)
+                    .padding(12.dp)
             ) {
                 Text(
                     text = anime.title,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.White,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(bottom = 4.dp)
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                ) {
+                    if (anime.season != MediaSeason.UNKNOWN__) {
+                        Text(
+                            text = anime.season.name.capitalize(),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.White.copy(alpha = 0.8f),
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                    }
+                    if (anime.seasonYear > 0) {
+                        Text(
+                            text = anime.seasonYear.toString(),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.White.copy(alpha = 0.8f)
+                        )
+                    }
+                }
 
-                Text(
-                    text = "${anime.season.name.capitalize()} ${anime.seasonYear}",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                RatingBar(rating = anime.rating / 20f)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Star,
+                        contentDescription = null,
+                        tint = Color(0xFFFFD700),
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Text(
+                        text = "%.1f".format(anime.rating / 10f),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
             }
         }
     }
