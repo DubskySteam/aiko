@@ -1,5 +1,5 @@
 <div align="center" style="display: flex; align-items: center; gap: 10px;">
-    <img src="docs/github/logo.png" alt="WinFlux Logo" width="128" style="border-radius: 50%; vertical-align: middle; align: left">
+    <img src="docs/github/logo.png" alt="WinFlux Logo" width="160" style="border-radius: 50%; vertical-align: middle; align: left">
     <h1 style="margin: 0;">Aiko</h1>
 </div>
 
