@@ -20,7 +20,7 @@ import kotlin.system.exitProcess
 @Preview
 @Composable
 fun Composer(windowState: WindowState) {
-    var screenActive by remember { mutableStateOf(Screens.Settings) }
+    var screenActive by remember { mutableStateOf(Screens.Home) }
     var selectedAnime by remember { mutableStateOf<Anime?>(null) }
     val windowState by remember { mutableStateOf(windowState) }
 
