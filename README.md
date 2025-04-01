@@ -1,4 +1,8 @@
-# Aiko
+<div align="center" style="display: flex; align-items: center; gap: 10px;">
+    <img src="docs/github/logo.png" alt="WinFlux Logo" width="128" style="border-radius: 50%; vertical-align: middle; align: left">
+    <h1 style="margin: 0;">Aiko</h1>
+</div>
+
 ## Anime Browser & Watchlist Manager
 
 A **Kotlin Multiplatform Compose** desktop app to browse anime, manage your personal watchlists from **AniList**, and watch anime directly in an embedded player. Includes synced watch parties with friends and **Discord Rich Presence** support.
