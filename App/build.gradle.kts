@@ -56,7 +56,6 @@ compose.resources {
 compose.desktop {
     application {
         mainClass = "dev.dubsky.aiko.EntryKt"
-
         nativeDistributions {
             windows {
                 includeAllModules = true
@@ -67,7 +66,7 @@ compose.desktop {
             }
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Aiko"
-            packageVersion = "1.6.3"
+            packageVersion = "1.7.0"
             description = "Anime watchlist manager and tracker"
             copyright = "© 2025 dubsky.dev All rights reserved."
             vendor = "Dubsky"
