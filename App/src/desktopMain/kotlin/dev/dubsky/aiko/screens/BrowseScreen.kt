@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -547,8 +548,6 @@ fun BrowseScreen(onAnimeSelected: (Anime) -> Unit = {}) {
                         AnimeCard(
                             anime = anime,
                             onClick = { onAnimeSelected(anime) },
-                            cardWidth = 50.dp,
-                            cardHeight = 300.dp
                         )
                     }
                 }

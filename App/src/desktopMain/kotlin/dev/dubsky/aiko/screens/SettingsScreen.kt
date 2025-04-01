@@ -4,11 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonColors
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
@@ -19,6 +15,7 @@ import dev.dubsky.aiko.components.button.ConfirmDialogButton
 import dev.dubsky.aiko.config.ConfigManager
 import dev.dubsky.aiko.logging.LogLevel
 import dev.dubsky.aiko.logging.Logger
+import dev.dubsky.aiko.theme.AikoDefaults
 import dev.dubsky.aiko.theme.AppTheme
 
 @Composable
@@ -90,20 +87,7 @@ fun SettingsScreen(
                         },
                         selected = currentTheme.name == entry.name,
                         label = { Text(entry.name) },
-                        colors = SegmentedButtonColors(
-                            activeContainerColor = MaterialTheme.colors.background,
-                            activeContentColor = MaterialTheme.colors.primary,
-                            activeBorderColor = MaterialTheme.colors.background,
-                            inactiveContainerColor = MaterialTheme.colors.background,
-                            inactiveContentColor = MaterialTheme.colors.onSurface,
-                            inactiveBorderColor = MaterialTheme.colors.background,
-                            disabledActiveContainerColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                            disabledActiveContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.38f),
-                            disabledActiveBorderColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                            disabledInactiveContainerColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                            disabledInactiveContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.38f),
-                            disabledInactiveBorderColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                        )
+                        colors = AikoDefaults.segmentedButtonColors
                     )
                 }
             }
@@ -123,20 +107,7 @@ fun SettingsScreen(
                         },
                         selected = isLoggingEnabled == entry,
                         label = { Text(entry.toString()) },
-                        colors = SegmentedButtonColors(
-                            activeContainerColor = MaterialTheme.colors.background,
-                            activeContentColor = MaterialTheme.colors.primary,
-                            activeBorderColor = MaterialTheme.colors.background,
-                            inactiveContainerColor = MaterialTheme.colors.background,
-                            inactiveContentColor = MaterialTheme.colors.onSurface,
-                            inactiveBorderColor = MaterialTheme.colors.background,
-                            disabledActiveContainerColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                            disabledActiveContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.38f),
-                            disabledActiveBorderColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                            disabledInactiveContainerColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                            disabledInactiveContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.38f),
-                            disabledInactiveBorderColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                        )
+                        colors = AikoDefaults.segmentedButtonColors
                     )
                 }
             }
@@ -209,20 +180,7 @@ fun SettingsScreen(
                         },
                         selected = isAutoUpdateEnabled == entry,
                         label = { Text(entry.toString()) },
-                        colors = SegmentedButtonColors(
-                            activeContainerColor = MaterialTheme.colors.background,
-                            activeContentColor = MaterialTheme.colors.primary,
-                            activeBorderColor = MaterialTheme.colors.background,
-                            inactiveContainerColor = MaterialTheme.colors.background,
-                            inactiveContentColor = MaterialTheme.colors.onSurface,
-                            inactiveBorderColor = MaterialTheme.colors.background,
-                            disabledActiveContainerColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                            disabledActiveContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.38f),
-                            disabledActiveBorderColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                            disabledInactiveContainerColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                            disabledInactiveContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.38f),
-                            disabledInactiveBorderColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                        )
+                        colors = AikoDefaults.segmentedButtonColors
                     )
                 }
             }
@@ -239,16 +197,14 @@ fun SettingsCategory(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        elevation = 4.dp,
         shape = RoundedCornerShape(8.dp),
-        backgroundColor = MaterialTheme.colors.surface,
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             content()
