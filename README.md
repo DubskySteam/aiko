@@ -56,6 +56,12 @@ _(Only as self-built for now, a until stable version is achieved and then publis
    ``` 
 
 ## Screenshots
+
+### Home Screen
 ![Screenshot](docs/github/homescreen.png)
-![Screenshot](docs/github/browse.png)
-![Screenshot](docs/github/settings.png)
+
+### Browse Screen
+![Screenshot](docs/github/browsescreen.png)
+
+### Player Screen
+![Screenshot](docs/github/playerscreen.png)
