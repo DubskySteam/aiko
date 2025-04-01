@@ -9,7 +9,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowState
@@ -136,6 +138,11 @@ fun SettingsScreen(
         SettingsCategory(title = "Player - API & Proxy") {
             Text(
                 text = "If you have questions about what to put here, please refer to the tutorial in the Discord server.",
+                fontWeight = FontWeight.Bold,
+                color = Color.Red
+            )
+            Spacer(
+                modifier = Modifier.height(8.dp)
             )
             TextField(
                 value = apiUrl,
@@ -167,8 +174,14 @@ fun SettingsScreen(
                 placeholder = { Text("") },
                 modifier = Modifier.fillMaxWidth()
             )
+            Spacer(
+                modifier = Modifier.height(8.dp)
+            )
             Text(
                 text = "Automatically update your watchlist when you watch an episode?"
+            )
+            Spacer(
+                modifier = Modifier.height(2.dp)
             )
             SingleChoiceSegmentedButtonRow {
                 listOf(true, false).forEachIndexed { index, entry ->
