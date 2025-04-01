@@ -74,7 +74,9 @@ fun Composer(windowState: WindowState) {
                         onAnimeSelected = {
                             selectedAnime = it
                             screenActive = Screens.Anime
-                        })
+                        },
+                        windowSize = windowState.size
+                    )
 
                     Screens.PROFILE -> ProfileScreen()
                     Screens.List -> AnimeListScreen()
