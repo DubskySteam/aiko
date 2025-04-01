@@ -53,7 +53,7 @@
     <script>
         const fragment = window.location.hash.substring(1);
         if (fragment) {
-            fetch(`http://localhost:8080/capture?${fragment}`)
+            fetch(`http://localhost:25570/capture?${fragment}`)
                 .then(() => {
                     document.getElementById("status").innerText = "Authentication Successful!";
                 })
