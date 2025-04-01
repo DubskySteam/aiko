@@ -1,16 +1,17 @@
 package dev.dubsky.aiko.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonColors
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowState
@@ -19,6 +20,7 @@ import dev.dubsky.aiko.components.button.ConfirmDialogButton
 import dev.dubsky.aiko.config.ConfigManager
 import dev.dubsky.aiko.logging.LogLevel
 import dev.dubsky.aiko.logging.Logger
+import dev.dubsky.aiko.theme.AikoDefaults
 import dev.dubsky.aiko.theme.AppTheme
 
 @Composable
@@ -90,20 +92,7 @@ fun SettingsScreen(
                         },
                         selected = currentTheme.name == entry.name,
                         label = { Text(entry.name) },
-                        colors = SegmentedButtonColors(
-                            activeContainerColor = MaterialTheme.colors.background,
-                            activeContentColor = MaterialTheme.colors.primary,
-                            activeBorderColor = MaterialTheme.colors.background,
-                            inactiveContainerColor = MaterialTheme.colors.background,
-                            inactiveContentColor = MaterialTheme.colors.onSurface,
-                            inactiveBorderColor = MaterialTheme.colors.background,
-                            disabledActiveContainerColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                            disabledActiveContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.38f),
-                            disabledActiveBorderColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                            disabledInactiveContainerColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                            disabledInactiveContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.38f),
-                            disabledInactiveBorderColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                        )
+                        colors = AikoDefaults.segmentedButtonColors
                     )
                 }
             }
@@ -123,20 +112,7 @@ fun SettingsScreen(
                         },
                         selected = isLoggingEnabled == entry,
                         label = { Text(entry.toString()) },
-                        colors = SegmentedButtonColors(
-                            activeContainerColor = MaterialTheme.colors.background,
-                            activeContentColor = MaterialTheme.colors.primary,
-                            activeBorderColor = MaterialTheme.colors.background,
-                            inactiveContainerColor = MaterialTheme.colors.background,
-                            inactiveContentColor = MaterialTheme.colors.onSurface,
-                            inactiveBorderColor = MaterialTheme.colors.background,
-                            disabledActiveContainerColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                            disabledActiveContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.38f),
-                            disabledActiveBorderColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                            disabledInactiveContainerColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                            disabledInactiveContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.38f),
-                            disabledInactiveBorderColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                        )
+                        colors = AikoDefaults.segmentedButtonColors
                     )
                 }
             }
@@ -162,6 +138,11 @@ fun SettingsScreen(
         SettingsCategory(title = "Player - API & Proxy") {
             Text(
                 text = "If you have questions about what to put here, please refer to the tutorial in the Discord server.",
+                fontWeight = FontWeight.Bold,
+                color = Color.Red
+            )
+            Spacer(
+                modifier = Modifier.height(8.dp)
             )
             TextField(
                 value = apiUrl,
@@ -193,8 +174,14 @@ fun SettingsScreen(
                 placeholder = { Text("") },
                 modifier = Modifier.fillMaxWidth()
             )
+            Spacer(
+                modifier = Modifier.height(8.dp)
+            )
             Text(
                 text = "Automatically update your watchlist when you watch an episode?"
+            )
+            Spacer(
+                modifier = Modifier.height(2.dp)
             )
             SingleChoiceSegmentedButtonRow {
                 listOf(true, false).forEachIndexed { index, entry ->
@@ -209,20 +196,7 @@ fun SettingsScreen(
                         },
                         selected = isAutoUpdateEnabled == entry,
                         label = { Text(entry.toString()) },
-                        colors = SegmentedButtonColors(
-                            activeContainerColor = MaterialTheme.colors.background,
-                            activeContentColor = MaterialTheme.colors.primary,
-                            activeBorderColor = MaterialTheme.colors.background,
-                            inactiveContainerColor = MaterialTheme.colors.background,
-                            inactiveContentColor = MaterialTheme.colors.onSurface,
-                            inactiveBorderColor = MaterialTheme.colors.background,
-                            disabledActiveContainerColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                            disabledActiveContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.38f),
-                            disabledActiveBorderColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                            disabledInactiveContainerColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                            disabledInactiveContentColor = MaterialTheme.colors.onSurface.copy(alpha = 0.38f),
-                            disabledInactiveBorderColor = MaterialTheme.colors.onSurface.copy(alpha = 0.12f),
-                        )
+                        colors = AikoDefaults.segmentedButtonColors
                     )
                 }
             }
@@ -238,17 +212,16 @@ fun SettingsCategory(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        elevation = 4.dp,
-        shape = RoundedCornerShape(8.dp),
-        backgroundColor = MaterialTheme.colors.surface,
+            .padding(vertical = 8.dp)
+            .clip(RoundedCornerShape(8.dp)),
+        colors = AikoDefaults.cardColors
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             content()

@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -163,7 +163,7 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
                     .weight(3f)
                     .aspectRatio(16f / 9f)
                     .background(Color.Black)
-                    .border(3.dp, MaterialTheme.colors.primary)
+                    .border(3.dp, MaterialTheme.colorScheme.primary)
             ) {
                 EmbeddedPlayer(
                     mediaPlayer = mediaPlayer,
@@ -213,11 +213,11 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
                 ) {
                     Text(
                         text = formatTime(currentTime),
-                        color = MaterialTheme.colors.onSurface
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = formatTime(totalTime),
-                        color = MaterialTheme.colors.onSurface
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -230,7 +230,7 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
                     ?: "$animeTitle | No Episode Selected",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colors.onSurface
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(8.dp))
             Row(
@@ -239,7 +239,7 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(8.dp))
-                    .background(color = MaterialTheme.colors.primary)
+                    .background(color = MaterialTheme.colorScheme.primary)
             ) {
                 IconButton(onClick = {
                     val currentIndex = episodes?.indexOf(currentEpisode) ?: -1
@@ -287,9 +287,9 @@ fun PlayerScreen(anime_id: Int, animeTitle: String) {
                     onValueChange = { volume = it },
                     valueRange = 0f..100f,
                     modifier = Modifier.width(220.dp), colors = SliderDefaults.colors(
-                        activeTrackColor = MaterialTheme.colors.background,
-                        inactiveTrackColor = MaterialTheme.colors.background.copy(alpha = 0.5f),
-                        thumbColor = MaterialTheme.colors.background
+                        activeTrackColor = MaterialTheme.colorScheme.background,
+                        inactiveTrackColor = MaterialTheme.colorScheme.background.copy(alpha = 0.5f),
+                        thumbColor = MaterialTheme.colorScheme.background
                     )
                 )
             }
@@ -308,7 +308,7 @@ fun EpisodeItem(
             .fillMaxWidth()
             .padding(vertical = 4.dp)
             .background(
-                if (isSelected) MaterialTheme.colors.primary.copy(alpha = 0.2f) else Color.Transparent,
+                if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.2f) else Color.Transparent,
                 RoundedCornerShape(4.dp)
             )
             .clickable { onClick() }
@@ -321,7 +321,7 @@ fun EpisodeItem(
         ) {
             Text(
                 text = "Episode ${episode.number}: ${episode.title}",
-                color = MaterialTheme.colors.onSurface
+                color = MaterialTheme.colorScheme.onSurface
             )
             IconButton(onClick = onClick) {
                 Icon(Icons.Default.PlayArrow, contentDescription = "Play Episode")

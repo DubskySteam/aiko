@@ -56,17 +56,17 @@ compose.resources {
 compose.desktop {
     application {
         mainClass = "dev.dubsky.aiko.EntryKt"
-
         nativeDistributions {
             windows {
                 includeAllModules = true
                 iconFile.set(project.file("src/commonMain/composeResources/drawable/logo.ico"))
                 menu = true
                 menuGroup = "Dubsky"
+                perUserInstall = true
             }
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Aiko"
-            packageVersion = "1.6.3"
+            packageVersion = "1.7.0"
             description = "Anime watchlist manager and tracker"
             copyright = "© 2025 dubsky.dev All rights reserved."
             vendor = "Dubsky"

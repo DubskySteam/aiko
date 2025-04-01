@@ -1,95 +1,56 @@
 package dev.dubsky.aiko.screens
 
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.times
 import coil3.compose.AsyncImage
+import dev.dubsky.aiko.api.AnimeData
 import dev.dubsky.aiko.api.MemCache
 import dev.dubsky.aiko.api.MemCache.topAiringAnime
 import dev.dubsky.aiko.api.MemCache.topSeasonalAnime
-import dev.dubsky.aiko.api.AnimeData
+import dev.dubsky.aiko.config.AppVersion
 import dev.dubsky.aiko.data.Anime
 import dev.dubsky.aiko.graphql.type.MediaSeason
+import dev.dubsky.aiko.logging.LogLevel
+import dev.dubsky.aiko.logging.Logger
+import dev.dubsky.aiko.resources.Res
+import dev.dubsky.aiko.resources.discord
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
+import java.awt.Desktop
+import java.net.URI
 
-@ExperimentalMaterialApi
 @Composable
-fun AnimeCard(anime: Anime, cardWidth: Dp, cardHeight: Dp, onClick: () -> Unit = {}) {
-    Card(
-        modifier = Modifier
-            .width(cardWidth)
-            .height(cardHeight)
-            .padding(8.dp),
-        shape = RoundedCornerShape(8.dp),
-        elevation = 4.dp,
-        backgroundColor = Color(0xFF1E2A38),
-        onClick = onClick
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(cardHeight * 0.7f)
-                    .background(Color.DarkGray)
-                    .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(4.dp)
-                ) {
-                    AsyncImage(
-                        model = anime.coverImage,
-                        contentDescription = "Anime Image",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-            }
-            Text(
-                text = anime.title,
-                color = Color.White,
-                fontWeight = FontWeight.Medium,
-                fontSize = 16.sp,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 8.dp)
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Preview
-@Composable
-fun HomeScreen(onAnimeSelected: (Anime) -> Unit = {}) {
+fun HomeScreen(
+    onAnimeSelected: (Anime) -> Unit = {},
+    onBrowseClick: () -> Unit = {},
+) {
+    var versionCheck by remember { mutableStateOf<AppVersion.VersionCheckResult?>(null) }
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
+            versionCheck = AppVersion.checkForUpdates()
             if (MemCache.needsRefresh()) {
                 val airingResponse = AnimeData().getTopAiringAnime()
                 val seasonalResponse = AnimeData().getTopAiringAnimeBySeason()
@@ -135,70 +96,284 @@ fun HomeScreen(onAnimeSelected: (Anime) -> Unit = {}) {
         }
     }
 
-    MaterialTheme {
-        BoxWithConstraints {
-            val maxWidth = maxWidth
-            val cardPadding = 8.dp
-            val cardsPerRow = 5
-            val totalPadding = (cardsPerRow + 1) * cardPadding
-            val cardWidth = (maxWidth - totalPadding) / (cardsPerRow * 2)  // Reduce width by 50%
-            val cardHeight = cardWidth * 1.5f  // Maintain aspect ratio
-
-            Column(
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        Column(
+            modifier = Modifier
+                .verticalScroll(scrollState)
+                .padding(horizontal = 24.dp)
+        ) {
+            Row(
                 modifier = Modifier
-                    .verticalScroll(scrollState)
-                    .padding(vertical = 16.dp)
+                    .fillMaxWidth()
+                    .padding(vertical = 24.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Top 3 Seasonal Anime
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                }
+                Text(
+                    text = "Welcome to Aiko",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = FontWeight.Bold
+                )
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Two Column Layout
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Top Airing",
-                            color = Color.White,
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                        topAiringAnime.chunked(cardsPerRow).forEach { row ->
-                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                                row.forEach { AnimeCard(anime = it, cardWidth = cardWidth, cardHeight = cardHeight,
-                                    onClick = {
-                                        onAnimeSelected(it)
-                                    }) }
-                            }
+                VersionInfoRow(
+                    updateAvailable = versionCheck is AppVersion.VersionCheckResult.UpdateAvailable,
+                    onUpdateClick = {
+                        if (Desktop.isDesktopSupported()) {
+                            Desktop.getDesktop().browse(URI("https://github.com/dubskysteam/aiko/releases"))
+                        } else {
+                            Logger.log(
+                                LogLevel.ERROR,
+                                "HomeScreen",
+                                "Opening GitHub link is not supported on this platform."
+                            )
+                        }
+                    },
+                    onPatchNotesClick = {
+                        if (Desktop.isDesktopSupported()) {
+                            Desktop.getDesktop().browse(URI("https://github.com/dubskysteam/aiko/releases"))
+                        } else {
+                            Logger.log(
+                                LogLevel.ERROR,
+                                "HomeScreen",
+                                "Opening GitHub link is not supported on this platform."
+                            )
                         }
                     }
+                )
+            }
 
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Top Seasonal",
-                            color = Color.White,
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(16.dp)
+            OutlinedButton(
+                onClick = {
+                    if (Desktop.isDesktopSupported()) {
+                        Desktop.getDesktop().browse(URI("https://discord.gg/KdesEpJMqj"))
+                    } else {
+                        Logger.log(
+                            LogLevel.ERROR,
+                            "HomeScreen",
+                            "Opening Discord link is not supported on this platform."
                         )
-                        topSeasonalAnime.chunked(cardsPerRow).forEach { row ->
-                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                                row.forEach { AnimeCard(anime = it, cardWidth = cardWidth, cardHeight = cardHeight
-                                    , onClick = {
-                                        onAnimeSelected(it)
-                                    }) }
-                            }
-                        }
                     }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(40.dp),
+                border = BorderStroke(1.dp, Color(0xFF7289DA)),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = Color(0xFF7289DA)
+                )
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        painter = painterResource(Res.drawable.discord),
+                        contentDescription = "Discord",
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        "Join Our Discord",
+                    )
                 }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            FilledTonalButton(
+                onClick = onBrowseClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text(
+                    text = "Browse Anime",
+                    style = MaterialTheme.typography.labelLarge,
+                    fontSize = 16.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            AnimeGridSection(
+                title = "Top Airing",
+                animeList = topAiringAnime,
+                onAnimeSelected = onAnimeSelected
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            AnimeGridSection(
+                title = "Top Seasonal",
+                animeList = topSeasonalAnime,
+                onAnimeSelected = onAnimeSelected
+            )
+        }
+    }
+}
+
+@Composable
+private fun VersionInfoRow(
+    updateAvailable: Boolean,
+    onUpdateClick: () -> Unit,
+    onPatchNotesClick: () -> Unit
+) {
+    var showVersionMenu by remember { mutableStateOf(false) }
+
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box {
+            TextButton(
+                onClick = { showVersionMenu = true },
+                modifier = Modifier.height(36.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = AppVersion.CURRENT_VERSION,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = "Version menu",
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+
+            DropdownMenu(
+                expanded = showVersionMenu,
+                onDismissRequest = { showVersionMenu = false }
+            ) {
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = "Current: ${AppVersion.CURRENT_VERSION}",
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    },
+                    onClick = { showVersionMenu = false }
+                )
+                DropdownMenuItem(
+                    text = { Text("View Patch Notes") },
+                    onClick = {
+                        onPatchNotesClick()
+                        showVersionMenu = false
+                    }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Button(
+            onClick = onUpdateClick,
+            enabled = updateAvailable,
+            modifier = Modifier.height(36.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (updateAvailable) Color.Red
+                    else MaterialTheme.colorScheme.surface,
+                contentColor = if (updateAvailable) MaterialTheme.colorScheme.onTertiary
+                else MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        ) {
+            Text(
+                text = if (updateAvailable) "Update" else "Updated",
+                style = MaterialTheme.typography.labelMedium
+            )
+        }
+    }
+}
+
+@Composable
+private fun AnimeGridSection(
+    title: String,
+    animeList: List<Anime>,
+    onAnimeSelected: (Anime) -> Unit
+) {
+    Column {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(150.dp),
+            modifier = Modifier.height(300.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(animeList) { anime ->
+                AnimeCard(
+                    anime = anime,
+                    onClick = { onAnimeSelected(anime) }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun AnimeCard(
+    anime: Anime,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .aspectRatio(0.67f),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        onClick = onClick
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            AsyncImage(
+                model = anime.coverImage,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.9f))
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = anime.title,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelMedium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(8.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+            ) {
+                Text(
+                    text = "${anime.rating}%",
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }

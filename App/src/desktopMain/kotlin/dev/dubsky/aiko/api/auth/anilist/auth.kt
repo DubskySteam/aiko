@@ -23,9 +23,9 @@ fun loadHtmlFile(): String {
 
 fun startLocalServer(): String? {
     var accessToken: String? = null
-    val server = HttpServer.create(InetSocketAddress(8080), 0)
+    val server = HttpServer.create(InetSocketAddress(25570), 0)
 
-    Logger.log(LogLevel.INFO, "Auth", "Starting local server on port 8080...")
+    Logger.log(LogLevel.INFO, "Auth", "Starting local server on port 25570...")
     server.createContext("/anilist_callback") { exchange ->
         val htmlContent = loadHtmlFile().toByteArray()
         exchange.sendResponseHeaders(200, htmlContent.size.toLong())

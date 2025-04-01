@@ -97,6 +97,7 @@ class AnimeData {
                 Optional.present(averageScore_greater)
             )
         ).execute()
+        Logger.log(LogLevel.INFO, "API", "Params: page: $page, perPage: $perPage, season: $season, seasonYear: $seasonYear, status: $status, averageScore_greater: $averageScore_greater")
         return response
     }
 

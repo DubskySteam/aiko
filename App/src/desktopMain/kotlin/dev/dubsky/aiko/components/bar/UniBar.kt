@@ -3,9 +3,9 @@ package dev.dubsky.aiko.components.bar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.*
@@ -41,7 +41,7 @@ fun UnifiedBar(
         ) {
             Text(
                 text = buildAnnotatedString {
-                    withStyle(SpanStyle(color = MaterialTheme.colors.primary)) {
+                    withStyle(SpanStyle(color = MaterialTheme.colorScheme.primary)) {
                         append("A")
                     }
                     append("iko")
@@ -89,7 +89,7 @@ fun UnifiedBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(1.dp)
-                .background(MaterialTheme.colors.primary)
+                .background(MaterialTheme.colorScheme.primary)
         )
     }
 }
@@ -101,8 +101,8 @@ fun NavItem(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    val textColor = if (isSelected) MaterialTheme.colors.primary else Color.White.copy(alpha = 0.8f)
-    val iconColor = if (isSelected) MaterialTheme.colors.primary else Color.White.copy(alpha = 0.8f)
+    val textColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.8f)
+    val iconColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.8f)
 
     Row(
         modifier = Modifier.clickable(onClick = onClick),

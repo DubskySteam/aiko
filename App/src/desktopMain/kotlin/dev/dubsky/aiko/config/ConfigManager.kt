@@ -33,6 +33,10 @@ object ConfigManager {
         }
     }
 
+    fun isValid(): Boolean {
+        return config.api.isNotEmpty() && config.proxy.isNotEmpty() && config.refer.isNotEmpty()
+    }
+
     fun setProxy(proxy: String) {
         config.proxy = proxy
         saveConfig()
