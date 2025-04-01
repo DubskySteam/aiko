@@ -159,12 +159,11 @@ fun AnimeInfo(
 fun AnimeScreen(anime: Anime, onPlayerClick: () -> Unit) {
     var showConfigError by remember { mutableStateOf(false) }
 
-    // Error dialog
     if(showConfigError) {
         AlertDialog(
             onDismissRequest = { showConfigError = false },
             title = { Text("Configuration Error") },
-            text = { Text("Please check your API configuration in settings.") },
+            text = { Text("Please check your API/Proxy/Refer configuration in settings.\nAll fields must be filled out!") },
             confirmButton = {
                 Button(onClick = { showConfigError = false }) {
                     Text("OK")
