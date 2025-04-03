@@ -33,6 +33,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import dev.dubsky.aiko.config.ConfigManager
 import dev.dubsky.aiko.data.Anime
 import dev.dubsky.aiko.graphql.type.MediaSeason
 import dev.dubsky.aiko.graphql.type.MediaStatus
@@ -48,6 +49,7 @@ fun BrowseScreen(
     windowSize: DpSize
 ) {
     var displayedAnime by remember { mutableStateOf<List<Anime>>(emptyList()) }
+    var rawAnime by remember { mutableStateOf<List<Anime>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
@@ -78,16 +80,15 @@ fun BrowseScreen(
         }
     }
 
-    LaunchedEffect(searchQuery) {
-        if (searchQuery.length >= 3 || searchQuery.isEmpty()) {
-            displayedAnime = if (searchQuery.isEmpty()) {
-                displayedAnime
-            } else {
-                displayedAnime.filter {
-                    it.title.contains(searchQuery, ignoreCase = true)
-                }
+    LaunchedEffect(searchQuery, rawAnime) {
+        displayedAnime = if (searchQuery.isEmpty() || searchQuery == "") {
+            rawAnime
+        } else {
+            rawAnime.filter {
+                it.title.contains(searchQuery, ignoreCase = true)
             }
         }
+
     }
 
     fun loadAnimeData() {
@@ -98,12 +99,14 @@ fun BrowseScreen(
                     season = filters.season,
                     seasonYear = filters.year,
                     status = filters.status,
-                    genre = filters.genres.joinToString(",") { it.displayName },
+                    genre = filters.genres.map { it.displayName },
                     averageScore_greater = (filters.minRating * 10).toInt(),
-                    perPage = filters.resultSize
+                    perPage = filters.resultSize,
+                    search = if (searchQuery != "" || searchQuery.isEmpty()) searchQuery else null,
+                    isAdult = ConfigManager.config.adult
                 )
 
-                displayedAnime = response.data?.Page?.media?.mapNotNull { media ->
+                rawAnime = response.data?.Page?.media?.mapNotNull { media ->
                     media?.let {
                         Anime(
                             id = it.id,
@@ -118,6 +121,8 @@ fun BrowseScreen(
                         )
                     }
                 } ?: emptyList()
+
+                searchQuery = ""
             } catch (e: Exception) {
                 Logger.log(LogLevel.ERROR, "BrowseScreen", "Failed to load anime: ${e.message}")
             } finally {
@@ -140,7 +145,7 @@ fun BrowseScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Search Field
+
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
@@ -470,6 +475,16 @@ enum class AnimeGenre(val displayName: String) {
     ACTION("Action"),
     ADVENTURE("Adventure"),
     COMEDY("Comedy"),
+    DRAMA("Drama"),
+    FANTASY("Fantasy"),
+    HISTORICAL("Historical"),
+    HORROR("Horror"),
+    MAGICAL("Magical"),
+    MYSTERY("Mystery"),
+    ROMANCE("Romance"),
+    SCI_FI("Sci-Fi"),
+    THRILLER("Thriller"),
+    TRAGIC("Tragic"),
 }
 
 fun String.capitalize(): String = this.lowercase().replaceFirstChar { it.uppercase() }

@@ -82,6 +82,11 @@ object ConfigManager {
         saveConfig()
     }
 
+    fun setAdult(adult: Boolean) {
+        config.adult = adult
+        saveConfig()
+    }
+
     fun saveConfig() {
         if (!configFile.parentFile.exists()) {
             configFile.parentFile.mkdirs()

@@ -7,6 +7,7 @@ data class AppConfig(
     var logging: Boolean = false,
     var theme: AppTheme = AppTheme.ORANGE,
     var autoUpdate: Boolean = false,
+    var adult: Boolean = false,
     var proxy: String = "",
     var refer: String = "",
     var api: String = "",
