@@ -48,6 +48,7 @@ fun BrowseScreen(
     windowSize: DpSize
 ) {
     var displayedAnime by remember { mutableStateOf<List<Anime>>(emptyList()) }
+    var rawAnime by remember { mutableStateOf<List<Anime>>(emptyList()) }
     var isLoading by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
@@ -78,16 +79,15 @@ fun BrowseScreen(
         }
     }
 
-    LaunchedEffect(searchQuery) {
-        if (searchQuery.length >= 3 || searchQuery.isEmpty()) {
-            displayedAnime = if (searchQuery.isEmpty()) {
-                displayedAnime
-            } else {
-                displayedAnime.filter {
-                    it.title.contains(searchQuery, ignoreCase = true)
-                }
+    LaunchedEffect(searchQuery, rawAnime) {
+        displayedAnime = if (searchQuery.isEmpty() || searchQuery == "") {
+            rawAnime
+        } else {
+            rawAnime.filter {
+                it.title.contains(searchQuery, ignoreCase = true)
             }
         }
+
     }
 
     fun loadAnimeData() {
@@ -103,7 +103,7 @@ fun BrowseScreen(
                     perPage = filters.resultSize
                 )
 
-                displayedAnime = response.data?.Page?.media?.mapNotNull { media ->
+                rawAnime = response.data?.Page?.media?.mapNotNull { media ->
                     media?.let {
                         Anime(
                             id = it.id,
@@ -140,7 +140,7 @@ fun BrowseScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Search Field
+
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
