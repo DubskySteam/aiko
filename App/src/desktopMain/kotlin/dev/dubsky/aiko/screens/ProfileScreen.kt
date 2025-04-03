@@ -1,12 +1,15 @@
 package dev.dubsky.aiko.screens
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,111 +53,162 @@ data class MangaStats(
 
 @Composable
 fun ProfileScreen() {
-    var profileData by remember { mutableStateOf<Profile?>(null) }
-    val coroutineScope = rememberCoroutineScope()
+    //var profileData by remember { mutableStateOf<Profile?>(null) }
+    //val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            try {
-                Logger.log(LogLevel.INFO, "Profile", "Attempting to call UserInfo endpoint")
-                val res = AnimeData().GetUserInfo()
-                res.data?.Viewer?.let { viewer ->
-                    profileData = Profile(
-                        id = viewer.id.toLong(),
-                        username = viewer.name ?: "Unknown",
-                        avatar = viewer.avatar?.large ?: "",
-                        banner = viewer.bannerImage,
-                        stats = UserStats(
-                            anime = viewer.statistics?.anime?.let { anime ->
-                                AnimeStats(
-                                    count = anime.count,
-                                    meanScore = anime.meanScore,
-                                    minutesWatched = anime.minutesWatched,
-                                    episodesWatched = anime.episodesWatched
-                                )
-                            },
-                            manga = viewer.statistics?.manga?.let { manga ->
-                                MangaStats(
-                                    count = manga.count,
-                                    meanScore = manga.meanScore,
-                                    chaptersRead = manga.chaptersRead
-                                )
-                            }
-                        )
-                    )
-                }
-                if (ConfigManager.config.userName != res.data?.Viewer?.name) {
-                    res.data?.Viewer?.name?.let { ConfigManager.setUser(it) }
-                }
-            } finally {
-                Logger.log(LogLevel.INFO, "Profile", "Fetch done")
-            }
-        }
-    }
+    //LaunchedEffect(Unit) {
+    //    coroutineScope.launch {
+    //        try {
+    //            Logger.log(LogLevel.INFO, "Profile", "Attempting to call UserInfo endpoint")
+    //            val res = AnimeData().GetUserInfo()
+    //            res.data?.Viewer?.let { viewer ->
+    //                profileData = Profile(
+    //                    id = viewer.id.toLong(),
+    //                    username = viewer.name,
+    //                    avatar = viewer.avatar?.large ?: "",
+    //                    banner = viewer.bannerImage,
+    //                    stats = UserStats(
+    //                        anime = viewer.statistics?.anime?.let { anime ->
+    //                            AnimeStats(
+    //                                count = anime.count,
+    //                                meanScore = anime.meanScore,
+    //                                minutesWatched = anime.minutesWatched,
+    //                                episodesWatched = anime.episodesWatched
+    //                            )
+    //                        },
+    //                        manga = viewer.statistics?.manga?.let { manga ->
+    //                            MangaStats(
+    //                                count = manga.count,
+    //                                meanScore = manga.meanScore,
+    //                                chaptersRead = manga.chaptersRead
+    //                            )
+    //                        }
+    //                    )
+    //                )
+    //            }
+    //            if (ConfigManager.config.userName != res.data?.Viewer?.name) {
+    //                res.data?.Viewer?.name?.let { ConfigManager.setUser(it) }
+    //            }
+    //        } finally {
+    //            Logger.log(LogLevel.INFO, "Profile", "Fetch done")
+    //        }
+    //    }
+    //}
 
+    //Box(
+    //    modifier = Modifier
+    //        .fillMaxSize()
+    //        .padding(32.dp)
+    //) {
+    //    if (profileData != null) {
+    //        Column(
+    //            modifier = Modifier
+    //                .fillMaxSize()
+    //                .verticalScroll(rememberScrollState())
+    //        ) {
+    //            AsyncImage(
+    //                model = profileData?.banner,
+    //                contentDescription = "Profile Banner",
+    //                contentScale = ContentScale.Crop,
+    //                modifier = Modifier
+    //                    .fillMaxWidth()
+    //                    .height(200.dp)
+    //            )
+
+    //            Column(
+    //                modifier = Modifier
+    //                    .fillMaxWidth()
+    //                    .padding(16.dp),
+    //                horizontalAlignment = Alignment.CenterHorizontally
+    //            ) {
+    //                AsyncImage(
+    //                    model = profileData?.avatar,
+    //                    contentDescription = "Profile Avatar",
+    //                    contentScale = ContentScale.Crop,
+    //                    modifier = Modifier
+    //                        .size(120.dp)
+    //                        .clip(CircleShape)
+    //                        .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
+    //                )
+
+    //                Spacer(modifier = Modifier.height(16.dp))
+
+    //                Text(
+    //                    text = profileData?.username ?: "Unknown",
+    //                    fontSize = 24.sp,
+    //                    fontWeight = FontWeight.Bold,
+    //                    color = MaterialTheme.colorScheme.onBackground
+    //                )
+
+    //                Spacer(modifier = Modifier.height(24.dp))
+
+    //                profileData?.stats?.let { stats ->
+    //                    StatsSection(stats)
+    //                }
+    //            }
+    //        }
+    //    } else {
+    //        Box(
+    //            modifier = Modifier.fillMaxSize(),
+    //            contentAlignment = Alignment.Center
+    //        ) {
+    //            CircularProgressIndicator()
+    //        }
+    //    }
+    //}
+
+
+    // CENTERED INFO BOX THAT SAYS "COMING IN NEXT MAJOR UPDATE"
     Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(32.dp)
+    ) {
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(32.dp)
+                .verticalScroll(rememberScrollState())
         ) {
-            if (profileData != null) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                ) {
-                    AsyncImage(
-                        model = profileData?.banner,
-                        contentDescription = "Profile Banner",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                    )
+            Text(
+                text = "Coming in next major update",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
 
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        AsyncImage(
-                            model = profileData?.avatar,
-                            contentDescription = "Profile Avatar",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .size(120.dp)
-                                .clip(CircleShape)
-                                .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
-                        )
+            Spacer(modifier = Modifier.height(24.dp))
 
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Text(
-                            text = profileData?.username ?: "Unknown",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-
-                        Spacer(modifier = Modifier.height(24.dp))
-
-                        profileData?.stats?.let { stats ->
-                            StatsSection(stats)
-                        }
-                    }
-                }
-            } else {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
+            Text(
+                text = "This feature is currently in development and will be released in the next major update.",
+                fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
+            )
         }
     }
+}
 
+
+@Composable
+fun StatItem(label: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = label,
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+        )
+        Text(
+            text = value,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
 
 @Composable
 fun StatsSection(stats: UserStats) {
@@ -197,27 +251,5 @@ fun StatsSection(stats: UserStats) {
             StatItem("Mean Score", manga.meanScore.toString())
             StatItem("Chapters Read", manga.chaptersRead.toString())
         }
-    }
-}
-
-@Composable
-fun StatItem(label: String, value: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = label,
-            fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
-        )
-        Text(
-            text = value,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
     }
 }
