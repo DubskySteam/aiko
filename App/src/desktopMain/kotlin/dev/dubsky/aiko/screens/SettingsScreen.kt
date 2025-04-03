@@ -32,6 +32,7 @@ fun SettingsScreen(
 ) {
     var isLoggingEnabled by remember { mutableStateOf(ConfigManager.config.logging) }
     var isAutoUpdateEnabled by remember { mutableStateOf(ConfigManager.config.autoUpdate) }
+    var isAdultEnabled by remember { mutableStateOf(ConfigManager.config.adult) }
     var proxy by remember { mutableStateOf(ConfigManager.config.proxy) }
     var apiUrl by remember { mutableStateOf(ConfigManager.config.api) }
     var referUrl by remember { mutableStateOf(ConfigManager.config.refer) }
@@ -92,6 +93,33 @@ fun SettingsScreen(
                         },
                         selected = currentTheme.name == entry.name,
                         label = { Text(entry.name) },
+                        colors = AikoDefaults.segmentedButtonColors
+                    )
+                }
+            }
+        }
+
+        SettingsCategory(title = "Content") {
+            Text(
+                text = "Switch to adult content? A hybrid between adult and non is not yet supported.",
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(
+                modifier = Modifier.height(10.dp)
+            )
+            SingleChoiceSegmentedButtonRow {
+                listOf(true, false).forEachIndexed { index, entry ->
+                    SegmentedButton(
+                        shape = SegmentedButtonDefaults.itemShape(
+                            index = index,
+                            count = 2
+                        ),
+                        onClick = {
+                            isAdultEnabled = entry
+                            ConfigManager.setAdult(entry)
+                        },
+                        selected = isAdultEnabled == entry,
+                        label = { Text(entry.toString()) },
                         colors = AikoDefaults.segmentedButtonColors
                     )
                 }

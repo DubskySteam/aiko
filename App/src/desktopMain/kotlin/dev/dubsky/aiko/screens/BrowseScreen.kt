@@ -33,6 +33,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import dev.dubsky.aiko.config.ConfigManager
 import dev.dubsky.aiko.data.Anime
 import dev.dubsky.aiko.graphql.type.MediaSeason
 import dev.dubsky.aiko.graphql.type.MediaStatus
@@ -101,8 +102,8 @@ fun BrowseScreen(
                     genre = filters.genres.joinToString(",") { it.displayName },
                     averageScore_greater = (filters.minRating * 10).toInt(),
                     perPage = filters.resultSize,
-                    search = searchQuery,
-                    isAdult = false
+                    search = if (searchQuery != "" || searchQuery.isEmpty()) searchQuery else null,
+                    isAdult = ConfigManager.config.adult
                 )
 
                 rawAnime = response.data?.Page?.media?.mapNotNull { media ->
