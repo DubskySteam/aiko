@@ -99,7 +99,7 @@ fun BrowseScreen(
                     season = filters.season,
                     seasonYear = filters.year,
                     status = filters.status,
-                    genre = filters.genres.joinToString(",") { it.displayName },
+                    genre = filters.genres.map { it.displayName },
                     averageScore_greater = (filters.minRating * 10).toInt(),
                     perPage = filters.resultSize,
                     search = if (searchQuery != "" || searchQuery.isEmpty()) searchQuery else null,
@@ -475,6 +475,16 @@ enum class AnimeGenre(val displayName: String) {
     ACTION("Action"),
     ADVENTURE("Adventure"),
     COMEDY("Comedy"),
+    DRAMA("Drama"),
+    FANTASY("Fantasy"),
+    HISTORICAL("Historical"),
+    HORROR("Horror"),
+    MAGICAL("Magical"),
+    MYSTERY("Mystery"),
+    ROMANCE("Romance"),
+    SCI_FI("Sci-Fi"),
+    THRILLER("Thriller"),
+    TRAGIC("Tragic"),
 }
 
 fun String.capitalize(): String = this.lowercase().replaceFirstChar { it.uppercase() }
