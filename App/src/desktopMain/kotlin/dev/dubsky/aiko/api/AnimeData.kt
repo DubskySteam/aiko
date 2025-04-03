@@ -82,7 +82,9 @@ class AnimeData {
         seasonYear: Int?,
         status: MediaStatus,
         genre: String = "",
-        averageScore_greater: Int
+        averageScore_greater: Int,
+        search: String?,
+        isAdult: Boolean?
     ): ApolloResponse<GetByFilterQuery.Data> {
         val apolloClient = buildApolloClient()
         val nSeason = if (season == MediaSeason.UNKNOWN__) null else season
@@ -94,7 +96,9 @@ class AnimeData {
                 Optional.presentIfNotNull(nSeason),
                 Optional.presentIfNotNull(seasonYear),
                 Optional.presentIfNotNull(nStatus),
-                Optional.present(averageScore_greater)
+                Optional.present(averageScore_greater),
+                Optional.presentIfNotNull(search),
+                Optional.presentIfNotNull(isAdult)
             )
         ).execute()
         Logger.log(LogLevel.INFO, "API", "Params: page: $page, perPage: $perPage, season: $season, seasonYear: $seasonYear, status: $status, averageScore_greater: $averageScore_greater")

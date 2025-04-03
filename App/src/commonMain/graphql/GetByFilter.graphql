@@ -1,6 +1,6 @@
-query GetByFilter($page: Int, $perPage: Int, $season: MediaSeason, $seasonYear: Int, $status: MediaStatus, $averageScore_greater: Int) {
+query GetByFilter($page: Int, $perPage: Int, $season: MediaSeason, $seasonYear: Int, $status: MediaStatus, $averageScore_greater: Int, $search: String, $isAdult: Boolean) {
     Page(page: $page, perPage: $perPage) {
-        media(sort: SCORE_DESC, type: ANIME, season: $season, seasonYear: $seasonYear, status: $status, averageScore_greater: $averageScore_greater, isAdult: false) {
+        media(sort: SCORE_DESC, type: ANIME, season: $season, seasonYear: $seasonYear, status: $status, averageScore_greater: $averageScore_greater, search: $search, isAdult: $isAdult) {
             title {
                 english
                 native

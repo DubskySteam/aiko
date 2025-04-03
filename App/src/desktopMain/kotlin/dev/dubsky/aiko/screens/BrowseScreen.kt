@@ -100,7 +100,9 @@ fun BrowseScreen(
                     status = filters.status,
                     genre = filters.genres.joinToString(",") { it.displayName },
                     averageScore_greater = (filters.minRating * 10).toInt(),
-                    perPage = filters.resultSize
+                    perPage = filters.resultSize,
+                    search = searchQuery,
+                    isAdult = false
                 )
 
                 rawAnime = response.data?.Page?.media?.mapNotNull { media ->
@@ -118,6 +120,8 @@ fun BrowseScreen(
                         )
                     }
                 } ?: emptyList()
+
+                searchQuery = ""
             } catch (e: Exception) {
                 Logger.log(LogLevel.ERROR, "BrowseScreen", "Failed to load anime: ${e.message}")
             } finally {
