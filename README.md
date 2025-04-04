@@ -12,14 +12,46 @@ Includes synced watch parties with friends and **Discord Rich Presence** support
 ## Installation
 
 ### Windows
-**Winget** _(Run this command in any terminal)_
+
+<details>
+<summary>
+
+#### winget
+
+</summary>
+
 ```powershell
 winget install -e --id Dubsky.Aiko --silent
 ```
-**Manual**
+
+</details>
+
+<details>
+<summary>
+
+#### Scoop
+
+</summary>
+
+```powershell
+scoop bucket add dubskysteam_scoop-bucket https://github.com/dubskysteam/scoop-bucket
+scoop bucket install aiko
+```
+
+</details>
+
+<details>
+<summary>
+
+#### Manual
+
+</summary>
+
 1. Download the latest release from the [Releases](https://github.com/dubskysteam/aiko/releases) page.
 2. Run the installer and follow the instructions.
 3. Launch the app from the Start menu.
+
+</details>
 
 ### Linux
 _(Only as self-built for now, a until stable version is achieved and then published on the package managers)_
