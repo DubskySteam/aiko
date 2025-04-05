@@ -121,7 +121,7 @@ fun HomeScreen(
                 )
 
                 VersionInfoRow(
-                    updateAvailable = versionCheck is AppVersion.VersionCheckResult.UpdateAvailable,
+                    updateAvailable = versionCheck ?: AppVersion.VersionCheckResult.UpToDate,
                     onUpdateClick = {
                         if (Desktop.isDesktopSupported()) {
                             Desktop.getDesktop().browse(URI("https://github.com/dubskysteam/aiko/releases"))
@@ -221,7 +221,7 @@ fun HomeScreen(
 
 @Composable
 private fun VersionInfoRow(
-    updateAvailable: Boolean,
+    updateAvailable: AppVersion.VersionCheckResult,
     onUpdateClick: () -> Unit,
     onPatchNotesClick: () -> Unit
 ) {
@@ -274,17 +274,21 @@ private fun VersionInfoRow(
 
         Button(
             onClick = onUpdateClick,
-            enabled = updateAvailable,
+            enabled = updateAvailable != AppVersion.VersionCheckResult.BetaVersion && updateAvailable != AppVersion.VersionCheckResult.UpToDate,
             modifier = Modifier.height(36.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (updateAvailable) Color.Red
+                containerColor = if (updateAvailable is AppVersion.VersionCheckResult.UpdateAvailable) Color.Red
                     else MaterialTheme.colorScheme.surface,
-                contentColor = if (updateAvailable) MaterialTheme.colorScheme.onTertiary
+                contentColor = if (updateAvailable is AppVersion.VersionCheckResult.UpdateAvailable) MaterialTheme.colorScheme.onTertiary
                 else MaterialTheme.colorScheme.onSurfaceVariant
             )
         ) {
             Text(
-                text = if (updateAvailable) "Update" else "Updated",
+                text = when (updateAvailable) {
+                    is AppVersion.VersionCheckResult.UpdateAvailable -> "Update"
+                    AppVersion.VersionCheckResult.BetaVersion -> "Beta"
+                    else -> "Up to date"
+                },
                 style = MaterialTheme.typography.labelMedium
             )
         }
