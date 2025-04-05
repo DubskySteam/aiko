@@ -6,8 +6,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Star
@@ -68,13 +68,13 @@ fun Chip(text: String, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colors.primary.copy(alpha = 0.2f))
-            .border(1.dp, MaterialTheme.colors.primary, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f))
+            .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(16.dp))
             .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
         Text(
             text = text,
-            color = MaterialTheme.colors.primary,
+            color = MaterialTheme.colorScheme.primary,
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium
         )
@@ -129,7 +129,7 @@ fun AnimeInfo(
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.h4,
+            style = MaterialTheme.typography.titleMedium,
             color = Color.White,
             fontWeight = FontWeight.Bold
         )
@@ -142,14 +142,14 @@ fun AnimeInfo(
             Text(
                 text = "$season $year",
                 color = Color(0xFFADB5BD),
-                style = MaterialTheme.typography.subtitle1
+                style = MaterialTheme.typography.labelSmall
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = description,
             color = Color.White,
-            style = MaterialTheme.typography.body1,
+            style = MaterialTheme.typography.bodyMedium,
             lineHeight = 24.sp
         )
     }
@@ -168,7 +168,10 @@ fun AnimeScreen(anime: Anime, onPlayerClick: () -> Unit) {
                 Button(onClick = { showConfigError = false }) {
                     Text("OK")
                 }
-            }
+            },
+            textContentColor = MaterialTheme.colorScheme.onSurface,
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.onSurface,
         )
     }
 
@@ -223,7 +226,7 @@ fun AnimeScreen(anime: Anime, onPlayerClick: () -> Unit) {
                         .height(50.dp),
                     shape = RoundedCornerShape(12.dp),
                     //colors = ButtonDefaults.buttonColors(
-                    //    backgroundColor = MaterialTheme.colors.primary,
+                    //    backgroundColor = MaterialTheme.colorScheme.primary,
                     //    contentColor = Color.White
                     //)
                 ) {

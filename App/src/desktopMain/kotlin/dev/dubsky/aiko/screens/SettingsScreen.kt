@@ -101,8 +101,8 @@ fun SettingsScreen(
 
         SettingsCategory(title = "Content") {
             Text(
-                text = "Switch to adult content? A hybrid between adult and non is not yet supported.",
-                fontWeight = FontWeight.Bold,
+                text = "Switch to adult content? A hybrid between NSFW and SFW is not yet supported.",
+                fontWeight = FontWeight.Bold
             )
             Spacer(
                 modifier = Modifier.height(10.dp)
@@ -119,7 +119,7 @@ fun SettingsScreen(
                             ConfigManager.setAdult(entry)
                         },
                         selected = isAdultEnabled == entry,
-                        label = { Text(entry.toString()) },
+                        label = { Text(if (entry) "NSFW" else "SFW") },
                         colors = AikoDefaults.segmentedButtonColors
                     )
                 }
@@ -127,28 +127,33 @@ fun SettingsScreen(
         }
 
         SettingsCategory(title = "Logging") {
-            SingleChoiceSegmentedButtonRow {
-                listOf(true, false).forEachIndexed { index, entry ->
-                    SegmentedButton(
-                        shape = SegmentedButtonDefaults.itemShape(
-                            index = index,
-                            count = 2
-                        ),
-                        onClick = {
-                            isLoggingEnabled = entry
-                            ConfigManager.setLogging(entry)
-                        },
-                        selected = isLoggingEnabled == entry,
-                        label = { Text(entry.toString()) },
-                        colors = AikoDefaults.segmentedButtonColors
-                    )
+            Row {
+                SingleChoiceSegmentedButtonRow {
+                    listOf(true, false).forEachIndexed { index, entry ->
+                        SegmentedButton(
+                            shape = SegmentedButtonDefaults.itemShape(
+                                index = index,
+                                count = 2
+                            ),
+                            onClick = {
+                                isLoggingEnabled = entry
+                                ConfigManager.setLogging(entry)
+                            },
+                            selected = isLoggingEnabled == entry,
+                            label = { Text(if (entry) "Enabled" else "Disabled") },
+                            colors = AikoDefaults.segmentedButtonColors
+                        )
+                    }
                 }
-            }
-            Button(
-                onClick = { navigateToLogs() },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("View Logs")
+                Spacer(
+                    modifier = Modifier.width(8.dp)
+                )
+                Button(
+                    onClick = { navigateToLogs() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("View Logs")
+                }
             }
         }
 
@@ -223,7 +228,7 @@ fun SettingsScreen(
                             ConfigManager.setAutoUpdate(entry)
                         },
                         selected = isAutoUpdateEnabled == entry,
-                        label = { Text(entry.toString()) },
+                        label = { Text(if (entry) "Enabled" else "Disabled") },
                         colors = AikoDefaults.segmentedButtonColors
                     )
                 }
