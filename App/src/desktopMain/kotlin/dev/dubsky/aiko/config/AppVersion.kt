@@ -7,13 +7,14 @@ import kotlinx.coroutines.withContext
 import java.net.URL
 
 object AppVersion {
-    const val CURRENT_VERSION = "1.0.0"
+    const val CURRENT_VERSION = "1.0.4"
 
     private const val VERSION_FILE_URL = "https://raw.githubusercontent.com/DubskySteam/aiko/refs/heads/VERSION_CHECK/VERSION"
 
     sealed class VersionCheckResult {
         data class UpdateAvailable(val current: String, val latest: String) : VersionCheckResult()
         object UpToDate : VersionCheckResult()
+        object BetaVersion : VersionCheckResult()
         data class Error(val message: String) : VersionCheckResult()
     }
 
@@ -29,6 +30,8 @@ object AppVersion {
             when {
                 latestVersion > CURRENT_VERSION ->
                     VersionCheckResult.UpdateAvailable(CURRENT_VERSION, latestVersion)
+                latestVersion < CURRENT_VERSION ->
+                    VersionCheckResult.BetaVersion
                 else ->
                     VersionCheckResult.UpToDate
             }
