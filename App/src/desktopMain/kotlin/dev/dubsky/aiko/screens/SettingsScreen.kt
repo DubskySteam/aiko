@@ -1,12 +1,13 @@
 package dev.dubsky.aiko.screens
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Terminal
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -22,6 +23,7 @@ import dev.dubsky.aiko.logging.LogLevel
 import dev.dubsky.aiko.logging.Logger
 import dev.dubsky.aiko.theme.AikoDefaults
 import dev.dubsky.aiko.theme.AppTheme
+import dev.dubsky.aiko.theme.getColorSchemeByEnum
 
 @Composable
 fun SettingsScreen(
@@ -45,115 +47,136 @@ fun SettingsScreen(
     ) {
 
         SettingsCategory(title = "Display") {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Button(
-                    onClick = {
-                        Logger.log(LogLevel.INFO, "SettingsScreen", "Attempting to set resolution > WQHD")
-                        ConfigManager.setResolution("WQHD")
-                        ConfigManager.saveConfig()
-                        windowState.size = DpSize(1920.dp, 1080.dp)
-                        Logger.log(LogLevel.INFO, "SettingsScreen", "Attempting to set resolution > WQHD")
-                    },
-                    modifier = Modifier.weight(1f)
+            Column() {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Using WQHD (2540x1440)")
+                    RadioButton(
+                        selected = windowState.size.width == 1280.dp && windowState.size.height == 720.dp,
+                        onClick = {
+                            windowState.size = DpSize(1280.dp, 720.dp)
+                            ConfigManager.setResolution("FHD")
+                            ConfigManager.saveConfig()
+                        },
+                    )
+                    Text("Floating Window (1280x720)")
                 }
-                Button(
-                    onClick = {
-                        Logger.log(LogLevel.INFO, "SettingsScreen", "Attempting to set resolution > FHD")
-                        ConfigManager.setResolution("FHD")
-                        ConfigManager.saveConfig()
-                        windowState.size = DpSize(1280.dp, 720.dp)
-                        Logger.log(LogLevel.INFO, "SettingsScreen", "Set resolution to FHD")
-                    },
-                    modifier = Modifier.weight(1f)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Using FHD (1920x1080)")
+                    RadioButton(
+                        selected = windowState.size.width == 1920.dp && windowState.size.height == 1080.dp,
+                        onClick = {
+                            windowState.size = DpSize(1920.dp, 1080.dp)
+                            ConfigManager.setResolution("WQHD")
+                            ConfigManager.saveConfig()
+                        },
+                    )
+                    Text("Floating Window (1920x1080)")
                 }
             }
         }
 
         SettingsCategory(title = "Theme") {
-            SingleChoiceSegmentedButtonRow {
-                AppTheme.entries.forEachIndexed { index, entry ->
-                    SegmentedButton(
-                        shape = SegmentedButtonDefaults.itemShape(
-                            index = index,
-                            count = AppTheme.entries.size
-                        ),
-                        onClick = {
-                            updateTheme(entry)
-                            ConfigManager.setTheme(entry)
-                            ConfigManager.saveConfig()
-                        },
-                        selected = currentTheme.name == entry.name,
-                        label = { Text(entry.name) },
-                        colors = AikoDefaults.segmentedButtonColors
-                    )
-                }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ){
+            AppTheme.entries.forEachIndexed { index, entry ->
+                Button(
+                    onClick = {
+                        updateTheme(entry)
+                        ConfigManager.setTheme(entry)
+                        ConfigManager.saveConfig()
+                    },
+                    shape = RoundedCornerShape(25.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = getColorSchemeByEnum(entry).secondary),
+                    elevation = ButtonDefaults.elevatedButtonElevation(
+                        defaultElevation = 5.dp,
+                        pressedElevation = 0.dp,
+                        hoveredElevation = 10.dp
+                    ),
+                    modifier = Modifier
+                        .size(40.dp)
+                ) {}
+            }
+
             }
         }
 
-        SettingsCategory(title = "Content") {
-            Text(
-                text = "Switch to adult content? A hybrid between NSFW and SFW is not yet supported.",
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(
-                modifier = Modifier.height(10.dp)
-            )
-            SingleChoiceSegmentedButtonRow {
-                listOf(true, false).forEachIndexed { index, entry ->
-                    SegmentedButton(
-                        shape = SegmentedButtonDefaults.itemShape(
-                            index = index,
-                            count = 2
-                        ),
-                        onClick = {
-                            isAdultEnabled = entry
-                            ConfigManager.setAdult(entry)
-                        },
-                        selected = isAdultEnabled == entry,
-                        label = { Text(if (entry) "NSFW" else "SFW") },
-                        colors = AikoDefaults.segmentedButtonColors
-                    )
-                }
+        SettingsCategory(title = "NSFW Content") {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Switch to adult content?",
+                    fontWeight = FontWeight.Bold
+                )
+                Switch(
+                    checked = isAdultEnabled,
+                    onCheckedChange = {
+                        isAdultEnabled = it
+                        ConfigManager.setAdult(it)
+                    },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                        uncheckedThumbColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    modifier = Modifier
+                        .height(40.dp)
+                )
             }
         }
 
         SettingsCategory(title = "Logging") {
-            Row {
-                SingleChoiceSegmentedButtonRow {
-                    listOf(true, false).forEachIndexed { index, entry ->
-                        SegmentedButton(
-                            shape = SegmentedButtonDefaults.itemShape(
-                                index = index,
-                                count = 2
-                            ),
-                            onClick = {
-                                isLoggingEnabled = entry
-                                ConfigManager.setLogging(entry)
-                            },
-                            selected = isLoggingEnabled == entry,
-                            label = { Text(if (entry) "Enabled" else "Disabled") },
-                            colors = AikoDefaults.segmentedButtonColors
-                        )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                OutlinedButton(
+                    onClick = { navigateToLogs() },
+                    modifier = Modifier
+                        .height(40.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = MaterialTheme.colorScheme.onSurface,
+                        containerColor = MaterialTheme.colorScheme.surface,
+                    ),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) { Icon(Icons.Default.Terminal, null)
+                        Text("View Logs")
                     }
                 }
-                Spacer(
-                    modifier = Modifier.width(8.dp)
+                Switch(
+                    checked = isLoggingEnabled,
+                    onCheckedChange = {
+                        isLoggingEnabled = it
+                        ConfigManager.setLogging(it)
+                    },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                        uncheckedThumbColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    modifier = Modifier
+                        .height(40.dp)
                 )
-                Button(
-                    onClick = { navigateToLogs() },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("View Logs")
-                }
             }
         }
 
@@ -242,22 +265,14 @@ fun SettingsCategory(
     title: String,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .clip(RoundedCornerShape(8.dp)),
-        colors = AikoDefaults.cardColors
+    Column(
+        modifier = Modifier.padding(16.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-            content()
-        }
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        content()
     }
 }

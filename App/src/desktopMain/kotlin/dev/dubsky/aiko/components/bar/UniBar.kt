@@ -6,10 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Maximize
-import androidx.compose.material.icons.filled.Minimize
-import androidx.compose.material.icons.filled.Window
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,6 +28,7 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun UnifiedBar(
+    onSettingsClick: () -> Unit,
     currentScreen: Screens,
     onScreenSelected: (Screens) -> Unit,
     onMinimizeClick: () -> Unit,
@@ -81,9 +79,6 @@ fun UnifiedBar(
                 NavItem("Player", currentScreen == Screens.PLAYER) {
                     onScreenSelected(Screens.PLAYER)
                 }
-                NavItem("Settings", currentScreen == Screens.Settings) {
-                    onScreenSelected(Screens.Settings)
-                }
 
                 Spacer(modifier = Modifier.width(30.dp))
 
@@ -128,6 +123,21 @@ fun UnifiedBar(
                     }
                 }
             }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Settings,
+                    contentDescription = "Settings",
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+                NavItem("Settings", currentScreen == Screens.Settings) {
+                    onSettingsClick()
+                }
+            }
+
+            Spacer(modifier = Modifier.width(20.dp))
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 ActionButton(Icons.Filled.Minimize, onClick = onMinimizeClick)
