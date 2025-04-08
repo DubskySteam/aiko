@@ -4,7 +4,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Terminal
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,15 +15,19 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.WindowState
 import dev.dubsky.aiko.api.auth.anilist.do_auth
 import dev.dubsky.aiko.components.button.ConfirmDialogButton
 import dev.dubsky.aiko.config.ConfigManager
 import dev.dubsky.aiko.logging.LogLevel
 import dev.dubsky.aiko.logging.Logger
+import dev.dubsky.aiko.resources.Res
+import dev.dubsky.aiko.resources.questionmark
 import dev.dubsky.aiko.theme.AikoDefaults
 import dev.dubsky.aiko.theme.AppTheme
 import dev.dubsky.aiko.theme.getColorSchemeByEnum
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun SettingsScreen(
@@ -195,15 +199,29 @@ fun SettingsScreen(
         }
 
         SettingsCategory(title = "Player - API & Proxy") {
-            Text(
-                text = "If you have questions about what to put here, please refer to the tutorial in the Discord server.",
-                fontWeight = FontWeight.Bold,
-                color = Color.Red
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.questionmark),
+                    contentDescription = "API & Proxy Help",
+                    modifier = Modifier
+                        .size(28.dp)
+                        .padding(end = 8.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = "Q&A on Discord",
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xffff6a00)
+                )
+            }
             Spacer(
                 modifier = Modifier.height(8.dp)
             )
-            TextField(
+            OutlinedTextField(
                 value = apiUrl,
                 onValueChange = {
                     apiUrl = it
@@ -211,19 +229,57 @@ fun SettingsScreen(
                 },
                 label = { Text("API URL") },
                 placeholder = { Text("127.0.0.1") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                shape = RoundedCornerShape(50.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    focusedSupportingTextColor = MaterialTheme.colorScheme.onPrimary,
+                    focusedLabelColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                leadingIcon = {
+                    Icon(
+                        Icons.Filled.Api,
+                        contentDescription = "API URL",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             )
-            TextField(
+            Spacer(
+                modifier = Modifier.height(8.dp)
+            )
+            OutlinedTextField(
                 value = proxy,
                 onValueChange = {
                     proxy = it
                     ConfigManager.setProxy(it)
                 },
-                label = { Text("Proxy URL") },
+                label = { Text("Proxy URL", modifier = Modifier.background(Color.Transparent)) },
                 placeholder = { Text("127.0.0.1") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                shape = RoundedCornerShape(50.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    focusedSupportingTextColor = MaterialTheme.colorScheme.onPrimary,
+                    focusedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                ),
+                leadingIcon = {
+                    Icon(
+                        Icons.Filled.Router,
+                        contentDescription = "Proxy URL",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             )
-            TextField(
+            Spacer(
+                modifier = Modifier.height(8.dp)
+            )
+            OutlinedTextField(
                 value = referUrl,
                 onValueChange = {
                     referUrl = it
@@ -231,33 +287,52 @@ fun SettingsScreen(
                 },
                 label = { Text("Refer URL") },
                 placeholder = { Text("") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                shape = RoundedCornerShape(50.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    focusedSupportingTextColor = MaterialTheme.colorScheme.onPrimary,
+                    focusedLabelColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                leadingIcon = {
+                    Icon(
+                        Icons.Filled.BroadcastOnHome,
+                        contentDescription = "Refer URL",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             )
             Spacer(
                 modifier = Modifier.height(8.dp)
             )
-            Text(
-                text = "Automatically update your watchlist when you watch an episode?"
-            )
-            Spacer(
-                modifier = Modifier.height(2.dp)
-            )
-            SingleChoiceSegmentedButtonRow {
-                listOf(true, false).forEachIndexed { index, entry ->
-                    SegmentedButton(
-                        shape = SegmentedButtonDefaults.itemShape(
-                            index = index,
-                            count = 2
-                        ),
-                        onClick = {
-                            isAutoUpdateEnabled = entry
-                            ConfigManager.setAutoUpdate(entry)
-                        },
-                        selected = isAutoUpdateEnabled == entry,
-                        label = { Text(if (entry) "Enabled" else "Disabled") },
-                        colors = AikoDefaults.segmentedButtonColors
-                    )
-                }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Auto-update after an episode?",
+                    fontWeight = FontWeight.Thin,
+                    modifier = Modifier.padding(end = 16.dp).width(IntrinsicSize.Max)
+                )
+                Switch(
+                    checked = isAutoUpdateEnabled,
+                    onCheckedChange = {
+                        isAutoUpdateEnabled = it
+                        ConfigManager.setAutoUpdate(it)
+                    },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                        uncheckedThumbColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    modifier = Modifier
+                        .height(40.dp)
+                )
             }
         }
     }
