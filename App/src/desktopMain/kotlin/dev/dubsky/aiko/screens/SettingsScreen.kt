@@ -140,6 +140,9 @@ fun SettingsScreen(
         }
 
         SettingsCategory(title = "Logging") {
+            Spacer(
+                modifier = Modifier.height(8.dp)
+            )
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
