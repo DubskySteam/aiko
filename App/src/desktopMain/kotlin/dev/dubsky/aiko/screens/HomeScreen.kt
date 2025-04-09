@@ -190,7 +190,7 @@ fun HomeScreen(
                     .fillMaxWidth()
                     .height(48.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = MaterialTheme.colorScheme.tertiary
                 )
             ) {
                 Text(
