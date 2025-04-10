@@ -1,30 +1,27 @@
 package dev.dubsky.aiko.screens
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.WindowState
 import dev.dubsky.aiko.api.auth.anilist.do_auth
-import dev.dubsky.aiko.components.button.ConfirmDialogButton
+import dev.dubsky.aiko.components.button.ConfirmDialogOutlinedButton
 import dev.dubsky.aiko.config.ConfigManager
-import dev.dubsky.aiko.logging.LogLevel
-import dev.dubsky.aiko.logging.Logger
 import dev.dubsky.aiko.resources.Res
 import dev.dubsky.aiko.resources.questionmark
-import dev.dubsky.aiko.theme.AikoDefaults
 import dev.dubsky.aiko.theme.AppTheme
 import dev.dubsky.aiko.theme.getColorSchemeByEnum
 import org.jetbrains.compose.resources.painterResource
@@ -91,26 +88,27 @@ fun SettingsScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ){
-            AppTheme.entries.forEachIndexed { index, entry ->
-                Button(
-                    onClick = {
-                        updateTheme(entry)
-                        ConfigManager.setTheme(entry)
-                        ConfigManager.saveConfig()
-                    },
-                    shape = RoundedCornerShape(25.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = getColorSchemeByEnum(entry).secondary),
-                    elevation = ButtonDefaults.elevatedButtonElevation(
-                        defaultElevation = 5.dp,
-                        pressedElevation = 0.dp,
-                        hoveredElevation = 10.dp
-                    ),
-                    modifier = Modifier
-                        .size(40.dp)
-                ) {}
-            }
+            ) {
+                AppTheme.entries.forEachIndexed { index, entry ->
+                    Button(
+                        onClick = {
+                            updateTheme(entry)
+                            ConfigManager.setTheme(entry)
+                            ConfigManager.saveConfig()
+                        },
+                        shape = RoundedCornerShape(25.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = getColorSchemeByEnum(entry).secondary
+                        ),
+                        elevation = ButtonDefaults.elevatedButtonElevation(
+                            defaultElevation = 5.dp,
+                            pressedElevation = 0.dp,
+                            hoveredElevation = 10.dp
+                        ),
+                        modifier = Modifier
+                            .size(40.dp)
+                    ) {}
+                }
 
             }
         }
@@ -167,7 +165,8 @@ fun SettingsScreen(
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) { Icon(Icons.Default.Terminal, null)
+                    ) {
+                        Icon(Icons.Default.Terminal, null)
                         Text("View Logs")
                     }
                 }
@@ -188,13 +187,13 @@ fun SettingsScreen(
         }
 
         SettingsCategory(title = "Connect your watchlist") {
-            ConfirmDialogButton(
+            ConfirmDialogOutlinedButton(
                 buttonText = "Authenticate with AniList",
                 dialogTitle = "AniList Authentication",
                 dialogMessage = "This will open a browser window to authenticate with AniList.",
                 confirmText = "Authenticate",
                 onConfirm = { do_auth() },
-                modifier = Modifier.fillMaxWidth()
+                icon = Icons.Filled.LockOpen
             )
         }
 
