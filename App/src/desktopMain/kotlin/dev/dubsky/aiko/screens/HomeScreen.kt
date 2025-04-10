@@ -27,6 +27,7 @@ import dev.dubsky.aiko.api.AnimeData
 import dev.dubsky.aiko.api.MemCache
 import dev.dubsky.aiko.api.MemCache.topAiringAnime
 import dev.dubsky.aiko.api.MemCache.topSeasonalAnime
+import dev.dubsky.aiko.components.card.AnimeCard
 import dev.dubsky.aiko.config.AppVersion
 import dev.dubsky.aiko.data.Anime
 import dev.dubsky.aiko.graphql.type.MediaSeason
@@ -320,63 +321,6 @@ private fun AnimeGridSection(
                 AnimeCard(
                     anime = anime,
                     onClick = { onAnimeSelected(anime) }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun AnimeCard(
-    anime: Anime,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .aspectRatio(0.67f),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        onClick = onClick
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            AsyncImage(
-                model = anime.coverImage,
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.9f))
-                    .padding(8.dp)
-            ) {
-                Text(
-                    text = anime.title,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.primaryContainer)
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
-            ) {
-                Text(
-                    text = "${anime.rating}%",
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Bold
                 )
             }
         }
