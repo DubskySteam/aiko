@@ -53,57 +53,63 @@ fun AnimeCard(
                     )
             )
 
-            Column(
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.6f))
                     .align(Alignment.BottomStart)
-                    .padding(12.dp)
             ) {
-                Text(
-                    text = anime.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.White,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(bottom = 4.dp)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomStart)
+                        .padding(12.dp)
                 ) {
-                    if (anime.season != MediaSeason.UNKNOWN__) {
-                        Text(
-                            text = anime.season.name.capitalize(),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = Color.White.copy(alpha = 0.8f),
-                            modifier = Modifier.padding(end = 8.dp)
-                        )
-                    }
-                    if (anime.seasonYear > 0) {
-                        Text(
-                            text = anime.seasonYear.toString(),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = Color.White.copy(alpha = 0.8f)
-                        )
-                    }
-                }
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Star,
-                        contentDescription = null,
-                        tint = Color(0xFFFFD700),
-                        modifier = Modifier.size(16.dp)
-                    )
                     Text(
-                        text = "%.1f".format(anime.rating / 10f),
-                        style = MaterialTheme.typography.labelSmall,
+                        text = anime.title,
+                        style = MaterialTheme.typography.titleMedium,
                         color = Color.White,
-                        modifier = Modifier.padding(start = 4.dp)
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(bottom = 4.dp)
                     )
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(bottom = 4.dp)
+                    ) {
+                        if (anime.season != MediaSeason.UNKNOWN__) {
+                            Text(
+                                text = anime.season.name.capitalize(),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Color.White.copy(alpha = 0.8f),
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                        }
+                        if (anime.seasonYear > 0) {
+                            Text(
+                                text = anime.seasonYear.toString(),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Color.White.copy(alpha = 0.8f)
+                            )
+                        }
+                    }
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Star,
+                            contentDescription = null,
+                            tint = Color(0xFFFFD700),
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Text(
+                            text = "%.1f".format(anime.rating / 10f),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.White,
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+                    }
                 }
             }
         }
