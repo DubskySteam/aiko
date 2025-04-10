@@ -27,6 +27,7 @@ import dev.dubsky.aiko.api.AnimeData
 import dev.dubsky.aiko.api.MemCache
 import dev.dubsky.aiko.api.MemCache.topAiringAnime
 import dev.dubsky.aiko.api.MemCache.topSeasonalAnime
+import dev.dubsky.aiko.components.card.AnimeCard
 import dev.dubsky.aiko.config.AppVersion
 import dev.dubsky.aiko.data.Anime
 import dev.dubsky.aiko.graphql.type.MediaSeason
@@ -146,75 +147,6 @@ fun HomeScreen(
                     }
                 )
             }
-
-            OutlinedButton(
-                onClick = {
-                    if (Desktop.isDesktopSupported()) {
-                        Desktop.getDesktop().browse(URI("https://discord.gg/KdesEpJMqj"))
-                    } else {
-                        Logger.log(
-                            LogLevel.ERROR,
-                            "HomeScreen",
-                            "Opening Discord link is not supported on this platform."
-                        )
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(40.dp),
-                border = BorderStroke(1.dp, Color(0xFF7289DA)),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = Color(0xFF7289DA)
-                )
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.discord),
-                        contentDescription = "Discord",
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        "Join Our Discord",
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            FilledTonalButton(
-                onClick = onBrowseClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                )
-            ) {
-                Text(
-                    text = "Browse Anime",
-                    style = MaterialTheme.typography.labelLarge,
-                    fontSize = 16.sp
-                )
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            AnimeGridSection(
-                title = "Top Airing",
-                animeList = topAiringAnime,
-                onAnimeSelected = onAnimeSelected
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            AnimeGridSection(
-                title = "Top Seasonal",
-                animeList = topSeasonalAnime,
-                onAnimeSelected = onAnimeSelected
-            )
         }
     }
 }
@@ -320,63 +252,6 @@ private fun AnimeGridSection(
                 AnimeCard(
                     anime = anime,
                     onClick = { onAnimeSelected(anime) }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun AnimeCard(
-    anime: Anime,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .aspectRatio(0.67f),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        onClick = onClick
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            AsyncImage(
-                model = anime.coverImage,
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.9f))
-                    .padding(8.dp)
-            ) {
-                Text(
-                    text = anime.title,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.primaryContainer)
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
-            ) {
-                Text(
-                    text = "${anime.rating}%",
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Bold
                 )
             }
         }
