@@ -1,13 +1,14 @@
 package dev.dubsky.aiko.screens
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -15,28 +16,19 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
 import dev.dubsky.aiko.api.AnimeData
 import dev.dubsky.aiko.api.MemCache
-import dev.dubsky.aiko.api.MemCache.topAiringAnime
-import dev.dubsky.aiko.api.MemCache.topSeasonalAnime
 import dev.dubsky.aiko.components.card.AnimeCard
 import dev.dubsky.aiko.config.AppVersion
 import dev.dubsky.aiko.data.Anime
 import dev.dubsky.aiko.graphql.type.MediaSeason
 import dev.dubsky.aiko.logging.LogLevel
 import dev.dubsky.aiko.logging.Logger
-import dev.dubsky.aiko.resources.Res
-import dev.dubsky.aiko.resources.discord
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.painterResource
 import java.awt.Desktop
 import java.net.URI
 
@@ -44,13 +36,16 @@ import java.net.URI
 fun HomeScreen(
     onAnimeSelected: (Anime) -> Unit = {},
     onBrowseClick: () -> Unit = {},
+    windowSize: DpSize
 ) {
     var versionCheck by remember { mutableStateOf<AppVersion.VersionCheckResult?>(null) }
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
+    val isLoading = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
+            isLoading.value = true
             versionCheck = AppVersion.checkForUpdates()
             if (MemCache.needsRefresh()) {
                 val airingResponse = AnimeData().getTopAiringAnime()
@@ -93,24 +88,24 @@ fun HomeScreen(
 
                 MemCache.updateTopSeasonal(newTopSeasonal)
                 MemCache.updateTopAiring(newTopAiring)
+                isLoading.value = false
             }
         }
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .padding(24.dp)
     ) {
         Column(
             modifier = Modifier
-                .verticalScroll(scrollState)
-                .padding(horizontal = 24.dp)
+                //.verticalScroll(scrollState)
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 24.dp),
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -147,9 +142,109 @@ fun HomeScreen(
                     }
                 )
             }
+
+            if (isLoading.value) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.onBackground,
+                        strokeWidth = 6.dp
+                    )
+                }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(scrollState)
+                ) {
+                    TopThreePreview(MemCache.topSeasonalAnime.take(3), onAnimeSelected)
+
+                    AnimeSection("Romance", onAnimeSelected)
+
+                    Spacer(modifier = Modifier.height(600.dp))
+
+                    AnimeSection("Action", onAnimeSelected)
+                    AnimeSection("Comedy", onAnimeSelected)
+                    AnimeSection("Drama", onAnimeSelected)
+                }
+            }
         }
     }
 }
+
+@Composable
+private fun TopThreePreview(
+    animeList: List<Anime>,
+    onAnimeSelected: (Anime) -> Unit
+) {
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+        val screenWidth = maxWidth
+        val cardWidth = screenWidth / 1.1f / 3  // 3 Cards + spacing
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            items(animeList) { anime ->
+                AnimeCard(
+                    anime = anime,
+                    onClick = { onAnimeSelected(anime) },
+                    modifier = Modifier
+                        .width(cardWidth)
+                        .aspectRatio(1.5f)
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+private fun AnimeSection(
+    sectionTitle: String,
+    onAnimeSelected: (Anime) -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp)
+        ) {
+            Text(
+                text = sectionTitle,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+                fontWeight = FontWeight.Bold,
+            )
+            Text(
+                text = "View more",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+        }
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(minSize = 150.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(max = 300.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            userScrollEnabled = false
+        ) {
+            items(MemCache.topSeasonalAnime.take(10)) { anime ->
+                AnimeCard(
+                    anime = anime,
+                    onClick = { onAnimeSelected(anime) },
+                    modifier = Modifier.aspectRatio(0.7f)
+                )
+            }
+        }
+
+    }
+}
+
 
 @Composable
 private fun VersionInfoRow(
@@ -210,7 +305,7 @@ private fun VersionInfoRow(
             modifier = Modifier.height(36.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = if (updateAvailable is AppVersion.VersionCheckResult.UpdateAvailable) Color.Red
-                    else MaterialTheme.colorScheme.surface,
+                else MaterialTheme.colorScheme.surface,
                 contentColor = if (updateAvailable is AppVersion.VersionCheckResult.UpdateAvailable) MaterialTheme.colorScheme.onTertiary
                 else MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -223,37 +318,6 @@ private fun VersionInfoRow(
                 },
                 style = MaterialTheme.typography.labelMedium
             )
-        }
-    }
-}
-
-@Composable
-private fun AnimeGridSection(
-    title: String,
-    animeList: List<Anime>,
-    onAnimeSelected: (Anime) -> Unit
-) {
-    Column {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(150.dp),
-            modifier = Modifier.height(300.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(animeList) { anime ->
-                AnimeCard(
-                    anime = anime,
-                    onClick = { onAnimeSelected(anime) }
-                )
-            }
         }
     }
 }
