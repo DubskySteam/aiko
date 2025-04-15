@@ -7,7 +7,7 @@ import kotlinx.coroutines.withContext
 import java.net.URL
 
 object AppVersion {
-    const val CURRENT_VERSION = "1.0.4"
+    const val CURRENT_VERSION = "1.1.0"
 
     private const val VERSION_FILE_URL = "https://raw.githubusercontent.com/DubskySteam/aiko/refs/heads/VERSION_CHECK/VERSION"
 

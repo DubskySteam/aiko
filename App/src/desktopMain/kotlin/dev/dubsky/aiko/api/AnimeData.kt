@@ -60,7 +60,7 @@ class AnimeData {
     suspend fun getTopAiringAnimeBySeason(
         page: Int = 1,
         pagePer: Int = 10,
-        season: MediaSeason = MediaSeason.WINTER,
+        season: MediaSeason = MediaSeason.SPRING,
         year: Int = 2025
     ): ApolloResponse<TopAnimeBySeasonQuery.Data> {
         val apolloClient = buildApolloClient()
