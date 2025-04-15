@@ -161,9 +161,7 @@ fun main() = application {
                                                 selectedAnime = it
                                                 screenActive = Screens.Anime
                                             },
-                                            onBrowseClick = {
-                                                screenActive = Screens.Browse
-                                            }
+                                            windowSize = windowState.size
                                         )
                                     }
 
