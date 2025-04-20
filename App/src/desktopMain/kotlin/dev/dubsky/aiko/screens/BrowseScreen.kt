@@ -1,45 +1,34 @@
 package dev.dubsky.aiko.screens
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import dev.dubsky.aiko.api.AnimeData
-import dev.dubsky.aiko.logging.LogLevel
-import dev.dubsky.aiko.logging.Logger
-import kotlinx.coroutines.launch
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.StarHalf
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.StarOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import dev.dubsky.aiko.api.AnimeData
+import dev.dubsky.aiko.components.animations.responsiveHover
+import dev.dubsky.aiko.components.card.AnimeCard
 import dev.dubsky.aiko.config.ConfigManager
 import dev.dubsky.aiko.data.Anime
 import dev.dubsky.aiko.graphql.type.MediaSeason
 import dev.dubsky.aiko.graphql.type.MediaStatus
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import dev.dubsky.aiko.logging.LogLevel
+import dev.dubsky.aiko.logging.Logger
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -282,12 +271,13 @@ fun BrowseScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(displayedAnime) { anime ->
-                    AnimeCardO(
+                    AnimeCard(
                         anime = anime,
                         onClick = { onAnimeSelected(anime) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(0.7f)
+                            .responsiveHover()
                     )
                 }
             }
@@ -352,96 +342,6 @@ private fun <T> FilterDropdown(
     }
 }
 
-@Composable
-fun AnimeCardO(
-    anime: Anime,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        onClick = onClick,
-        modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            AsyncImage(
-                model = anime.coverImage,
-                contentDescription = anime.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                Color.Black.copy(alpha = 0.7f)
-                            ),
-                            startY = 0.6f
-                        )
-                    )
-            )
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomStart)
-                    .padding(12.dp)
-            ) {
-                Text(
-                    text = anime.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.White,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(bottom = 4.dp)
-                )
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(bottom = 4.dp)
-                ) {
-                    if (anime.season != MediaSeason.UNKNOWN__) {
-                        Text(
-                            text = anime.season.name.capitalize(),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = Color.White.copy(alpha = 0.8f),
-                            modifier = Modifier.padding(end = 8.dp)
-                        )
-                    }
-                    if (anime.seasonYear > 0) {
-                        Text(
-                            text = anime.seasonYear.toString(),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = Color.White.copy(alpha = 0.8f)
-                        )
-                    }
-                }
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Star,
-                        contentDescription = null,
-                        tint = Color(0xFFFFD700),
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Text(
-                        text = "%.1f".format(anime.rating / 10f),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Color.White,
-                        modifier = Modifier.padding(start = 4.dp)
-                    )
-                }
-            }
-        }
-    }
-}
 
 @Composable
 fun RatingBar(rating: Float) {
@@ -450,7 +350,7 @@ fun RatingBar(rating: Float) {
             Icon(
                 imageVector = when {
                     rating >= index + 1 -> Icons.Filled.Star
-                    rating > index -> Icons.Filled.StarHalf
+                    rating > index -> Icons.AutoMirrored.Filled.StarHalf
                     else -> Icons.Filled.StarOutline
                 },
                 contentDescription = null,

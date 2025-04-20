@@ -56,13 +56,16 @@ scoop bucket install aiko
 ### Linux
 _(Only as self-built for now, a until stable version is achieved and then published on the package managers)_
 
-## Features _(as of v1.0.0)_
+## Features
 
 - 🔥 **Explore Trending & Seasonal Anime** – Stay up to date with the latest hits.
 - 🔍 **Browse the AniList Database** – Search and view detailed anime information.
 - 🎥 **Embedded Video Player** – Watch anime directly in the app.
+
+## Coming soon
 - 👫 **Watch Together** – Sync up with friends and enjoy anime together.
-- 🎮 **Discord RPC Integration** – Show your currently watched anime in Discord.
+- 🎮 **Discord RPC Integration** – Show what you're up to in Discord.
+- 📺 **Desktop Notifications** – Get notified when new episodes are available.
 
 ## Roadmap
 
@@ -74,18 +77,8 @@ _(Only as self-built for now, a until stable version is achieved and then publis
 - [ ] Implement watchlist management
 - [ ] Implement "Watch Together"
 - [ ] Improve UI/UX for a seamless experience
-
-## Build from source
-
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/dubskysteam/aiko.git
-   cd aiko
-   ```
-2. Build the project:
-   ```sh
-   ./gradlew packageReleaseDistributionForCurrentOS
-   ``` 
+- [ ] Implement Discord Rich Presence
+- [ ] Implement Desktop Notifications
 
 ## Screenshots
 
