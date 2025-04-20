@@ -3,34 +3,25 @@ package dev.dubsky.aiko.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import dev.dubsky.aiko.api.AnimeData
 import dev.dubsky.aiko.api.MemCache
+import dev.dubsky.aiko.components.animations.responsiveHover
 import dev.dubsky.aiko.components.card.AnimeCard
 import dev.dubsky.aiko.config.AppVersion
 import dev.dubsky.aiko.data.Anime
 import dev.dubsky.aiko.graphql.type.MediaSeason
-import dev.dubsky.aiko.logging.LogLevel
-import dev.dubsky.aiko.logging.Logger
 import kotlinx.coroutines.launch
-import java.awt.Desktop
-import java.net.URI
 
 @Composable
 fun HomeScreen(
@@ -48,8 +39,7 @@ fun HomeScreen(
             isLoading.value = true
             versionCheck = AppVersion.checkForUpdates()
             if (MemCache.needsRefresh()) {
-                val airingResponse = AnimeData().getTopAiringAnime()
-                val seasonalResponse = AnimeData().getTopAiringAnimeBySeason()
+                val seasonalResponse = AnimeData().getTopAiringAnimeBySeason(pagePer = 50)
 
                 val allSeasonalAnime = seasonalResponse.data?.Page?.media?.mapNotNull { media ->
                     media?.let {
@@ -67,27 +57,7 @@ fun HomeScreen(
                     }
                 } ?: emptyList()
 
-                val newTopThree = allSeasonalAnime.sortedByDescending { it.rating }.take(3)
-                val newTopSeasonal = allSeasonalAnime.take(10)
-
-                val newTopAiring = airingResponse.data?.Page?.media?.mapNotNull { media ->
-                    media?.let {
-                        Anime(
-                            id = it.id,
-                            title = it.title?.english ?: it.title?.native ?: "Unknown",
-                            imageUrl = it.bannerImage ?: "",
-                            rating = it.averageScore ?: 0,
-                            description = it.description ?: "",
-                            season = it.season ?: MediaSeason.UNKNOWN__,
-                            genres = it.genres?.mapNotNull { genre -> genre } ?: emptyList(),
-                            coverImage = it.coverImage?.large ?: "",
-                            seasonYear = it.seasonYear ?: 1500
-                        )
-                    }
-                }?.take(10) ?: emptyList()
-
-                MemCache.updateTopSeasonal(newTopSeasonal)
-                MemCache.updateTopAiring(newTopAiring)
+                MemCache.updateTopSeasonal(allSeasonalAnime)
                 isLoading.value = false
             }
         }
@@ -100,51 +70,13 @@ fun HomeScreen(
             .padding(24.dp)
     ) {
         Column(
-            modifier = Modifier
-                //.verticalScroll(scrollState)
+            modifier = Modifier.fillMaxSize()
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Welcome to Aiko",
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
-                    fontWeight = FontWeight.Bold
-                )
-
-                VersionInfoRow(
-                    updateAvailable = versionCheck ?: AppVersion.VersionCheckResult.UpToDate,
-                    onUpdateClick = {
-                        if (Desktop.isDesktopSupported()) {
-                            Desktop.getDesktop().browse(URI("https://github.com/dubskysteam/aiko/releases"))
-                        } else {
-                            Logger.log(
-                                LogLevel.ERROR,
-                                "HomeScreen",
-                                "Opening GitHub link is not supported on this platform."
-                            )
-                        }
-                    },
-                    onPatchNotesClick = {
-                        if (Desktop.isDesktopSupported()) {
-                            Desktop.getDesktop().browse(URI("https://github.com/dubskysteam/aiko/releases"))
-                        } else {
-                            Logger.log(
-                                LogLevel.ERROR,
-                                "HomeScreen",
-                                "Opening GitHub link is not supported on this platform."
-                            )
-                        }
-                    }
-                )
-            }
-
             if (isLoading.value) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
                     CircularProgressIndicator(
                         color = MaterialTheme.colorScheme.onBackground,
                         strokeWidth = 6.dp
@@ -156,15 +88,24 @@ fun HomeScreen(
                         .fillMaxSize()
                         .verticalScroll(scrollState)
                 ) {
-                    TopThreePreview(MemCache.topSeasonalAnime.take(3), onAnimeSelected)
+                    PreviewRow(
+                        animeList = MemCache.topSeasonalAnime.take(4),
+                        onAnimeSelected = onAnimeSelected,
+                        windowSize = windowSize
+                    )
 
-                    AnimeSection("Romance", onAnimeSelected)
+                    Spacer(modifier = Modifier.height(32.dp))
 
-                    Spacer(modifier = Modifier.height(600.dp))
-
-                    AnimeSection("Action", onAnimeSelected)
-                    AnimeSection("Comedy", onAnimeSelected)
-                    AnimeSection("Drama", onAnimeSelected)
+                    CategoryRows(
+                        categories = listOf(
+                            "Romance" to MemCache.topSeasonalAnime.filter { it.genres.contains("Romance") },
+                            "Action" to MemCache.topSeasonalAnime.filter { it.genres.contains("Action") },
+                            "Comedy" to MemCache.topSeasonalAnime.filter { it.genres.contains("Comedy") },
+                            "Drama" to MemCache.topSeasonalAnime.filter { it.genres.contains("Drama") }
+                        ),
+                        onAnimeSelected = onAnimeSelected,
+                        windowSize = windowSize
+                    )
                 }
             }
         }
@@ -172,152 +113,78 @@ fun HomeScreen(
 }
 
 @Composable
-private fun TopThreePreview(
+private fun PreviewRow(
     animeList: List<Anime>,
-    onAnimeSelected: (Anime) -> Unit
+    onAnimeSelected: (Anime) -> Unit,
+    windowSize: DpSize
 ) {
-    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-        val screenWidth = maxWidth
-        val cardWidth = screenWidth / 1.1f / 3  // 3 Cards + spacing
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            items(animeList) { anime ->
-                AnimeCard(
-                    anime = anime,
-                    onClick = { onAnimeSelected(anime) },
-                    modifier = Modifier
-                        .width(cardWidth)
-                        .aspectRatio(1.5f)
-                )
-            }
-        }
-    }
-}
-
-
-@Composable
-private fun AnimeSection(
-    sectionTitle: String,
-    onAnimeSelected: (Anime) -> Unit
-) {
-    Column(
-        modifier = Modifier.fillMaxWidth()
+    val spacing = 16.dp
+    val cardWidth = ((windowSize.width - spacing * 5) / 4).coerceAtLeast(180.dp)
+    val cardHeight = (cardWidth / 16f * 9f).coerceAtLeast(100.dp)
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(spacing)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp)
-        ) {
-            Text(
-                text = sectionTitle,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-                fontWeight = FontWeight.Bold,
-            )
-            Text(
-                text = "View more",
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onBackground,
+        items(animeList) { anime ->
+            AnimeCard(
+                anime = anime,
+                onClick = { onAnimeSelected(anime) },
+                modifier = Modifier
+                    .width(cardWidth)
+                    .height(cardHeight)
+                    .responsiveHover()
             )
         }
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(minSize = 150.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(max = 300.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            userScrollEnabled = false
-        ) {
-            items(MemCache.topSeasonalAnime.take(10)) { anime ->
-                AnimeCard(
-                    anime = anime,
-                    onClick = { onAnimeSelected(anime) },
-                    modifier = Modifier.aspectRatio(0.7f)
-                )
-            }
-        }
-
     }
 }
 
-
 @Composable
-private fun VersionInfoRow(
-    updateAvailable: AppVersion.VersionCheckResult,
-    onUpdateClick: () -> Unit,
-    onPatchNotesClick: () -> Unit
+private fun CategoryRows(
+    categories: List<Pair<String, List<Anime>>>,
+    onAnimeSelected: (Anime) -> Unit,
+    windowSize: DpSize
 ) {
-    var showVersionMenu by remember { mutableStateOf(false) }
-
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Box {
-            TextButton(
-                onClick = { showVersionMenu = true },
-                modifier = Modifier.height(36.dp)
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = AppVersion.CURRENT_VERSION,
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    Icon(
-                        imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = "Version menu",
-                        modifier = Modifier.size(20.dp)
-                    )
+    val spacing = 24.dp
+    val cardMinWidth = 150.dp
+    val maxCardsPerCategory = ((windowSize.width / 2 - spacing * 2) / cardMinWidth).toInt().coerceAtLeast(1)
+    for (row in 0 until 2) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = spacing / 2),
+            horizontalArrangement = Arrangement.spacedBy(spacing)
+        ) {
+            for (col in 0 until 2) {
+                val catIndex = row * 2 + col
+                if (catIndex < categories.size) {
+                    val (title, animeList) = categories[catIndex]
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.onBackground,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            items(animeList.take(maxCardsPerCategory)) { anime ->
+                                AnimeCard(
+                                    anime = anime,
+                                    onClick = { onAnimeSelected(anime) },
+                                    modifier = Modifier
+                                        .width(cardMinWidth)
+                                        .aspectRatio(0.7f)
+                                        .responsiveHover()
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    Spacer(modifier = Modifier.weight(1f))
                 }
             }
-
-            DropdownMenu(
-                expanded = showVersionMenu,
-                onDismissRequest = { showVersionMenu = false }
-            ) {
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = "Current: ${AppVersion.CURRENT_VERSION}",
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    },
-                    onClick = { showVersionMenu = false }
-                )
-                DropdownMenuItem(
-                    text = { Text("View Patch Notes") },
-                    onClick = {
-                        onPatchNotesClick()
-                        showVersionMenu = false
-                    }
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Button(
-            onClick = onUpdateClick,
-            enabled = updateAvailable != AppVersion.VersionCheckResult.BetaVersion && updateAvailable != AppVersion.VersionCheckResult.UpToDate,
-            modifier = Modifier.height(36.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = if (updateAvailable is AppVersion.VersionCheckResult.UpdateAvailable) Color.Red
-                else MaterialTheme.colorScheme.surface,
-                contentColor = if (updateAvailable is AppVersion.VersionCheckResult.UpdateAvailable) MaterialTheme.colorScheme.onTertiary
-                else MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        ) {
-            Text(
-                text = when (updateAvailable) {
-                    is AppVersion.VersionCheckResult.UpdateAvailable -> "Update"
-                    AppVersion.VersionCheckResult.BetaVersion -> "Beta"
-                    else -> "Up to date"
-                },
-                style = MaterialTheme.typography.labelMedium
-            )
         }
     }
 }
