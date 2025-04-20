@@ -19,12 +19,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowState
 import dev.dubsky.aiko.api.auth.anilist.do_auth
 import dev.dubsky.aiko.components.button.ConfirmDialogOutlinedButton
+import dev.dubsky.aiko.components.util.VersionInfoRow
+import dev.dubsky.aiko.config.AppVersion
 import dev.dubsky.aiko.config.ConfigManager
 import dev.dubsky.aiko.resources.Res
 import dev.dubsky.aiko.resources.questionmark
 import dev.dubsky.aiko.theme.AppTheme
 import dev.dubsky.aiko.theme.getColorSchemeByEnum
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
+import java.awt.Desktop
+import java.net.URI
 
 @Composable
 fun SettingsScreen(
@@ -39,6 +44,14 @@ fun SettingsScreen(
     var proxy by remember { mutableStateOf(ConfigManager.config.proxy) }
     var apiUrl by remember { mutableStateOf(ConfigManager.config.api) }
     var referUrl by remember { mutableStateOf(ConfigManager.config.refer) }
+    var versionCheck by remember { mutableStateOf<AppVersion.VersionCheckResult?>(null) }
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            versionCheck = AppVersion.checkForUpdates()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -46,6 +59,24 @@ fun SettingsScreen(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
+        SettingsCategory(title = "App Version") {
+            versionCheck?.let {
+                VersionInfoRow(
+                    onUpdateClick = {
+                        if (Desktop.isDesktopSupported()) {
+                            Desktop.getDesktop().browse(URI("https://github.com/dubsky/aiko/releases"))
+                        }
+                    },
+                    onPatchNotesClick = {
+                        if (Desktop.isDesktopSupported()) {
+                            Desktop.getDesktop()
+                                .browse(URI("https://github.com/dubsky/aiko/releases/tag/v${AppVersion.CURRENT_VERSION}"))
+                        }
+                    },
+                    updateAvailable = it
+                )
+            }
+        }
 
         SettingsCategory(title = "Display") {
             Column() {
